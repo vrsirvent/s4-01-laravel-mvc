@@ -1,3 +1,142 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Righteous&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    /* Colores Neón */
+    --neon-cyan: #64D2FF;
+    --neon-purple: #BF5AF2;
+    --neon-pink: #FF6B9D;
+    --neon-yellow: #FFD60A;
+    --neon-green: #30D158;
+
+    /* Fondos */
+    --bg-dark: #0a0a0a;
+    --bg-darker: #050505;
+    --bg-card: #1a1a1a;
+
+    /* Metales */
+    --chrome-light: #E8E8E8;
+    --chrome-dark: #404040;
+    --gold: #FFD700;
+
+    /* Sombras Neón */
+    --shadow-cyan: 0 0 20px var(--neon-cyan);
+    --shadow-purple: 0 0 20px var(--neon-purple);
+    --shadow-pink: 0 0 20px var(--neon-pink);
+}
+
+body {
+    background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+    color: #e0e0e0;
+    font-family: 'Orbitron', sans-serif;
+    min-height: 100vh;
+}
+
+.text-neon-cyan {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.text-neon-purple {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+
+.text-neon-pink {
+    color: var(--neon-pink);
+    text-shadow: 0 0 10px var(--neon-pink);
+}
+
+.text-neon-yellow {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 10px var(--neon-yellow);
+}
+
+.btn-chrome {
+    background: linear-gradient(145deg, #E8E8E8, #B8B8B8);
+    border: 2px solid var(--chrome-dark);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.5),
+        0 4px 8px rgba(0, 0, 0, 0.3);
+    font-family: 'Righteous', cursive;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-chrome:hover {
+    background: linear-gradient(145deg, #F8F8F8, #C8C8C8);
+    box-shadow:
+        inset 0 2px 6px rgba(255, 255, 255, 0.7),
+        0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-chrome:active {
+    transform: translateY(0);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.card-neon {
+    background: rgba(26, 26, 26, 0.8);
+    border: 2px solid;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.card-neon:hover {
+    transform: translateY(-5px);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+    background: rgba(26, 26, 26, 0.9);
+    border: 2px solid #404040;
+    color: #e0e0e0;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+    outline: none;
+}
+
+nav {
+    background: linear-gradient(90deg, rgba(10, 10, 10, 0.95), rgba(26, 26, 26, 0.95));
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--neon-cyan);
+    box-shadow: 0 4px 20px rgba(100, 210, 255, 0.3);
+}
+
+a {
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+@media (max-width: 768px) {
+    .font-neon {
+        font-size: 1.5rem;
+    }
+}
+
