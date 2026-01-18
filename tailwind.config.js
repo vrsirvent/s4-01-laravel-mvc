@@ -7,15 +7,29 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './node_modules/flowbite/**/*.js',
     ],
 
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                'neon': ['"Righteous"', 'cursive'],
+                'retro': ['"Orbitron"', 'sans-serif'],
             },
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms, 
+        require('daisyui'), 
+        require('flowbite/plugin')
+    ],
+
+    daisyui: {
+        themes: false,
+        base: true,
+        styled: true,
+        utils: true,
+    },
 };
