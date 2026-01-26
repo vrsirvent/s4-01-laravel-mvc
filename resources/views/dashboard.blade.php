@@ -23,12 +23,12 @@
 
                     <div class="info-panel">
                         <p class="text-xs text-gray-400">Selección actual:</p>
-                        <p class="font-neon text-sm text-neon-red" id="quantityText">🔴 1 CANCIONES</p>
-                        <p class="font-neon text-sm mt-1 text-neon-cyan" id="modeText">🏍️ MOTO (CANCIONES)</p>
+                        <p class="font-neon text-sm text-neon-red" id="quantityText">🔴 1 SONG</p>
+                        <p class="font-neon text-sm mt-1 text-neon-cyan" id="modeText">🏍️ MOTO (SONGS)</p>
                     </div>
 
                     <div class="credits">
-                        <p class="credits-label">CRÉDITOS:</p>
+                        <p class="credits-label">CREDIT:</p>
                         <p class="credits-amount">${{ number_format(Auth::user()->money ?? 0, 2) }}</p>
                     </div>
                 </div>
@@ -64,9 +64,9 @@
                             </div>
 
                             <div class="now-playing">
-                                <h3 class="text-base md:text-lg now-playing-title">♪ Reproduciendo... ♪</h3>
-                                <p class="text-sm md:text-base now-playing-subtitle">Selecciona tu música</p>
-                                <p class="text-xs now-playing-hint">Usa el semáforo para elegir cantidad</p>
+                                <h3 class="text-base md:text-lg now-playing-title">♪ Playing... ♪</h3>
+                                <p class="text-sm md:text-base now-playing-subtitle">Select your music</p>
+                                <p class="text-xs now-playing-hint">Use the traffic light to select quantity</p>
                             </div>
 
                             <div class="vehicles">
@@ -90,30 +90,30 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             <div class="catalog">
-                                <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎵 CATÁLOGO</h3>
+                                <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎵 CATALOG</h3>
                                 
                                 <div class="empty-state">
                                     <p class="empty-state-icon">🎵</p>
-                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">PRÓXIMAMENTE</p>
-                                    <p class="text-xs md:text-sm">El catálogo estará disponible pronto</p>
+                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">COMING SOON</p>
+                                    <p class="text-xs md:text-sm">The catalog will be available soon</p>
                                 </div>
                             </div>
 
                             <div class="favorites">
-                                <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITOS</h3>
+                                <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITES</h3>
                                 
                                 <div class="empty-state">
                                     <p class="empty-state-icon">💖</p>
-                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-pink">SIN FAVORITOS</p>
-                                    <p class="text-xs md:text-sm">Aún no tienes canciones favoritas</p>
+                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-pink">NO FAVORITES</p>
+                                    <p class="text-xs md:text-sm">You don't have any favorite songs yet</p>
                                 </div>
 
-                                <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-cyan">📖 CÓMO USAR</h4>
+                                <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-cyan">📖 HOW TO USE</h4>
                                 <ol class="list-decimal list-inside text-xs md:text-sm instructions-list">
-                                    <li>Usa el semáforo para elegir cantidad (1, 3 o 5 canciones)</li>
-                                    <li>Elige el modo: Moto para canciones sueltas o Coche para artista completo</li>
-                                    <li>Selecciona canciones del catálogo</li>
-                                    <li>Reproduce tu selección con los controles</li>
+                                    <li>Use the traffic light to select quantity (1, 3 or 5 songs)</li>
+                                    <li>Choose the mode: Moto for individual songs or Car for full artist</li>
+                                    <li>Select songs from the catalog</li>
+                                    <li>Play your selection with the controls</li>
                                 </ol>
                             </div>
                         </div>
@@ -121,19 +121,19 @@
                         <!-- BUSCADOR -->
                         <div class="mt-4 md:mt-6 mb-4 md:mb-6 search-container-green">
                             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                <input type="text" placeholder="🔍 Buscar canciones..." class="search-input-green w-full sm:flex-1">
-                                <button class="control-btn w-full sm:w-auto btn-padding-lg">BUSCAR</button>
+                                <input type="text" placeholder="🔍 Search songs..." class="search-input-green w-full sm:flex-1">
+                                <button class="control-btn w-full sm:w-auto btn-padding-lg">SEARCH</button>
                             </div>
                         </div>
 
                         <div class="mt-4 md:mt-6 fichas-container">
-                            <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MIS FICHAS</h3>
+                            <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MY TICKETS</h3>
                             
                             <div class="flex flex-wrap justify-center md:justify-around items-center gap-4 md:gap-6">
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-red">🏍️ MOTO 1</p>
                                     <p class="ficha-count text-xl md:text-2xl text-neon-red">0</p>
-                                    <p class="ficha-text">fichas</p>
+                                    <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
@@ -141,7 +141,7 @@
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-yellow">🏍️ MOTO 3</p>
                                     <p class="ficha-count text-xl md:text-2xl text-neon-yellow">0</p>
-                                    <p class="ficha-text">fichas</p>
+                                    <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
@@ -149,61 +149,61 @@
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-green">🏍️ MOTO 5</p>
                                     <p class="ficha-count text-xl md:text-2xl text-neon-green">0</p>
-                                    <p class="ficha-text">fichas</p>
+                                    <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
 
                                 <div class="ficha-item w-full sm:w-auto">
-                                    <p class="ficha-label text-sm md:text-base text-neon-purple">🚗 COCHE</p>
+                                    <p class="ficha-label text-sm md:text-base text-neon-purple">🚗 CAR</p>
                                     <p class="ficha-count text-xl md:text-2xl text-neon-purple">0</p>
-                                    <p class="ficha-text">fichas</p>
+                                    <p class="ficha-text">tokens</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-4 md:mt-6 comprar-container">
-                            <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎟️ COMPRAR FICHAS</h3>
+                            <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎟️ BUY TOKENS</h3>
                             
                             <div class="flex flex-wrap justify-center md:justify-around items-center gap-4 md:gap-6">
                                 <div class="compra-item w-full sm:w-auto">
                                     <p class="compra-label text-sm md:text-base text-neon-red">🏍️ MOTO 1</p>
-                                    <p class="compra-description">1 canción</p>
-                                    <p class="compra-price text-lg md:text-xl">$100.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">COMPRAR</button>
+                                    <p class="compra-description">1 song</p>
+                                    <p class="compra-price text-lg md:text-xl">€ 100.00</p>
+                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
                                 </div>
 
                                 <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
 
                                 <div class="compra-item w-full sm:w-auto">
                                     <p class="compra-label text-sm md:text-base text-neon-yellow">🏍️ MOTO 3</p>
-                                    <p class="compra-description">3 canciones</p>
-                                    <p class="compra-price text-lg md:text-xl">$250.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">COMPRAR</button>
+                                    <p class="compra-description">3 songs</p>
+                                    <p class="compra-price text-lg md:text-xl">€ 250.00</p>
+                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
                                 </div>
 
                                 <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
 
                                 <div class="compra-item w-full sm:w-auto">
                                     <p class="compra-label text-sm md:text-base text-neon-green">🏍️ MOTO 5</p>
-                                    <p class="compra-description">5 canciones</p>
-                                    <p class="compra-price text-lg md:text-xl">$400.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">COMPRAR</button>
+                                    <p class="compra-description">5 songs</p>
+                                    <p class="compra-price text-lg md:text-xl">€ 400.00</p>
+                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
                                 </div>
 
                                 <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
 
                                 <div class="compra-item w-full sm:w-auto">
-                                    <p class="compra-label text-sm md:text-base text-neon-purple">🚗 COCHE</p>
-                                    <p class="compra-description">Artista completo</p>
-                                    <p class="compra-price text-lg md:text-xl">$500.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">COMPRAR</button>
+                                    <p class="compra-label text-sm md:text-base text-neon-purple">🚗 CAR</p>
+                                    <p class="compra-description">Complete artist</p>
+                                    <p class="compra-price text-lg md:text-xl">€ 500.00</p>
+                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
                                 </div>
                             </div>
                             
                             <div class="mt-3 md:mt-4 info-box text-center">
                                 <p class="text-xs md:text-sm text-gray-light">
-                                    💡 Compra fichas con tus créditos para reproducir música en el jukebox
+                                    💡 Buy tokens with your credits to play music on the jukebox
                                 </p>
                             </div>
                         </div>
@@ -217,8 +217,8 @@
 
                 <div class="footer-info">
                     <div class="max-w-3xl mx-auto text-center">
-                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">💡 INSTRUCCIÓN</p>
-                        <p class="text-xs md:text-sm text-gray-400">Navega por el catálogo, busca tus canciones favoritas y márcalas con ⭐</p>
+                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">💡 INSTRUCTION</p>
+                        <p class="text-xs md:text-sm text-gray-400">Navigate the catalog, find your favorite songs and mark them with ⭐</p>
                     </div>
                 </div>
             </div>
@@ -236,13 +236,13 @@
             
             if (quantity === 1) {
                 document.querySelector('.traffic-light.red').classList.add('active');
-                document.getElementById('quantityText').textContent = '🔴 1 CANCIONES';
+                document.getElementById('quantityText').textContent = '🔴 1 SONGS';
             } else if (quantity === 3) {
                 document.querySelector('.traffic-light.yellow').classList.add('active');
-                document.getElementById('quantityText').textContent = '🟡 3 CANCIONES';
+                document.getElementById('quantityText').textContent = '🟡 3 SONGS';
             } else if (quantity === 5) {
                 document.querySelector('.traffic-light.green').classList.add('active');
-                document.getElementById('quantityText').textContent = '🟢 5 CANCIONES';
+                document.getElementById('quantityText').textContent = '🟢 5 SONGS';
             }
         }
 
@@ -252,10 +252,10 @@
             
             if (mode === 'moto') {
                 document.getElementById('vehicleMoto').classList.add('active');
-                document.getElementById('modeText').textContent = '🏍️ MOTO (CANCIONES)';
+                document.getElementById('modeText').textContent = '🏍️ MOTO (SONGS)';
             } else {
                 document.getElementById('vehicleCar').classList.add('active');
-                document.getElementById('modeText').textContent = '🚗 COCHE (ARTISTA COMPLETO)';
+                document.getElementById('modeText').textContent = '🚗 CAR (COMPLETE ARTIST)';
             }
         }
 
