@@ -3,29 +3,27 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'other_information', 
+        'Money',
+
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
      * @var list<string>
      */
     protected $hidden = [
@@ -34,8 +32,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -43,6 +39,56 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'Money' => 'decimal:2', 
         ];
     }
+
+    // Relationships
+
+    // User has many favorite songs (Many to Many)
+    public function favoriteSongs()
+    {
+        return $this->belongsToMany(
+            MusicSong::class,
+            'favorite_songs',
+            'user_id',
+            'music_song_id'
+        )->withTimestamps();
+    }
+
+    // User has many tokens (One to Many)
+    public function userTokens()
+    {
+        return $this->hasMany(UserToken::class);
+    }
+
+   // Helper methods
+
+    /**
+     * @param int $songId
+     * @return bool
+     */
+    public function hasFavorite($songId)
+    {
+        return $this->favoriteSongs()->where('music_song_id', $songId)->exists();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAvailableTokens()
+    {
+        return $this->userTokens()->where('quantity', '>', 0)->get();
+    }
+
+    /**
+     * @param float $amount
+     * @return bool
+     */
+    public function hasEnoughMoney($amount)
+    {
+        return $this->Money >= $amount;
+    }
+
 }
+
