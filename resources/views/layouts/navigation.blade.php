@@ -20,7 +20,7 @@
                     {{-- (welcome) --}}
                     <a href="{{ route('login') }}" class="nav-link font-neon {{ request()->routeIs('login') ? 'active' : '' }}">LOGIN</a>
                     <a href="{{ route('register') }}" class="nav-link font-neon {{ request()->routeIs('register') ? 'active' : '' }}">REGISTER</a>
-                    <div class="nav-underline" style="margin-right: 16%"></div>
+                    <div class="nav-underline"></div>
                 @else
                     {{-- Users --}}
                     <a href="{{ route('dashboard') }}" class="nav-link font-neon {{ request()->routeIs('dashboard') ? 'active' : '' }}">DASHBOARD</a>
@@ -35,15 +35,13 @@
                 <div class="flex items-center gap-2 md:gap-3">
                     {{-- Authenticated User --}}
                     <div class="text-right hidden sm:block">
-                        <p class="font-neon text-sm md:text-base" style="color: var(--neon-yellow);">{{ Auth::user()->name }}</p>
-                        <!-- <p class="text-xs text-gray-400">Usuario</p> -->
+                        <p class="font-neon text-sm md:text-base text-neon-yellow">{{ Auth::user()->name }}</p>
                     </div>
 
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="w-12 h-12 md:w-14 md:h-14 rounded-lg bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-700 flex items-center justify-center border-2 border-yellow-400 shadow-lg" 
-                                    style="box-shadow: 0 0 15px rgba(255, 214, 10, 0.5); margin-right: 30px">
-                                <div class="w-8 h-8 md:w-9 md:h-9" style="background: radial-gradient(circle, #ffd700 0%, #ffed4e 40%, #d4af37 100%); border-radius: 50%; border: 2px solid #b8860b; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0,0,0,0.2);"></div>
+                            <button class="user-avatar-container">
+                                <div class="user-avatar-inner"></div>
                             </button>
                         </x-slot>
 
@@ -70,8 +68,7 @@
 
             <!-- Responsive Minimalist Hamburger Menu -->
             <div class="-me-2 flex items-center md:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md transition duration-150 ease-in-out" 
-                        style="color: var(--neon-cyan);">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md transition duration-150 ease-in-out text-neon-cyan">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -109,9 +106,9 @@
 
         @auth
             <!-- Responsive Settings Options -->
-            <div class="pt-4 pb-1" style="border-top: 1px solid var(--neon-cyan);">
+            <div class="pt-4 pb-1 responsive-settings-border">
                 <div class="px-4">
-                    <div class="font-medium text-base" style="color: var(--neon-cyan);">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-base text-neon-cyan">{{ Auth::user()->name }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
 
@@ -136,3 +133,4 @@
         @endauth
     </div>
 </nav>
+
