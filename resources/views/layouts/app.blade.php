@@ -21,7 +21,7 @@
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="shadow" style="background: linear-gradient(90deg, rgba(10, 10, 10, 0.8), rgba(26, 26, 26, 0.8)); border-bottom: 2px solid var(--neon-cyan);">
+                <header class="shadow header-gradient">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
@@ -35,3 +35,4 @@
         </div>
     </body>
 </html>
+
