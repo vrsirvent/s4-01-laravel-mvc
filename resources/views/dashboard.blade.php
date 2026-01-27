@@ -1,7 +1,21 @@
 <x-app-layout>
-    <div class="py-4 md:py-8">
-        <div class="container mx-auto px-2 md:px-4">
-            <div class="jukebox max-w-7xl mx-auto">
+<div class="py-4 md:py-8">
+    <div class="container mx-auto px-2 md:px-4">
+        
+        {{-- Mensajes de éxito/error --}}
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-900 border border-green-500 text-green-100 rounded-lg">
+                <p class="font-neon text-center">✅ {{ session('success') }}</p>
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="mb-4 p-4 bg-red-900 border border-red-500 text-red-100 rounded-lg">
+                <p class="font-neon text-center">❌ {{ session('error') }}</p>
+            </div>
+        @endif
+        
+        <div class="jukebox max-w-7xl mx-auto">
                 
                 <div class="jukebox-top">
                     <div class="top-arch"></div>
@@ -199,7 +213,11 @@
                                         <p class="compra-label text-sm md:text-base text-neon-{{ $color }}">{{ $icon }} {{ strtoupper($token->name) }}</p>
                                         <p class="compra-description">{{ $description }}</p>
                                         <p class="compra-price text-lg md:text-xl">€ {{ number_format($token->price, 2) }}</p>
-                                        <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKEN</button>
+                                        <form action="{{ route('jukebox.purchase') }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <input type="hidden" name="jukebox_token_id" value="{{ $token->id }}">
+                                            <button type="submit" class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKEN</button>
+                                        </form>
                                     </div>
                                 @endforeach
                             </div>                            

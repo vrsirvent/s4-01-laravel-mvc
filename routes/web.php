@@ -11,6 +11,10 @@ Route::get('/dashboard', [App\Http\Controllers\JukeboxController::class, 'index'
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::post('/jukebox/purchase-token', [App\Http\Controllers\JukeboxController::class, 'purchaseToken'])
+    ->middleware(['auth', 'verified'])
+    ->name('jukebox.purchase');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
