@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     /**
-     * Agregar canción a favoritos
+     * Add song to favorites
      */
     public function add(Request $request)
     {
@@ -19,7 +19,7 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
         
-        // Verificar si ya existe
+        // if exist already
         $exists = FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->exists();
@@ -28,7 +28,7 @@ class FavoriteController extends Controller
             return redirect()->back()->with('error', 'This song is already in your favorites');
         }
         
-        // Agregar a favoritos
+        // Add to favorites
         FavoriteSong::create([
             'user_id' => $user->id,
             'music_song_id' => $request->music_song_id,
@@ -38,7 +38,7 @@ class FavoriteController extends Controller
     }
     
     /**
-     * Quitar canción de favoritos
+     * Remove song from favorites
      */
     public function remove(Request $request)
     {
@@ -48,7 +48,7 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
         
-        // Eliminar de favoritos
+        // Remove from favorites
         FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->delete();
@@ -57,7 +57,7 @@ class FavoriteController extends Controller
     }
     
     /**
-     * Toggle favorito (agregar o quitar)
+     * Favorite (add or remove)
      */
     public function toggle(Request $request)
     {
@@ -67,20 +67,20 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
         
-        // Verificar si existe
+        // if exists already
         $favorite = FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->first();
         
         if ($favorite) {
-            // Quitar de favoritos
+            // Remove from favorites
             $favorite->delete();
             return response()->json([
                 'status' => 'removed',
                 'message' => 'Song removed from favorites'
             ]);
         } else {
-            // Agregar a favoritos
+            // Add to favorites
             FavoriteSong::create([
                 'user_id' => $user->id,
                 'music_song_id' => $request->music_song_id,
