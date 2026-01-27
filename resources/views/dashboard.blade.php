@@ -117,8 +117,11 @@
                                                         :class="{ 'selected': isSongSelected(song.id) }"
                                                         @click="toggleSongSelection(song.id)"
                                                         style="cursor: pointer;">
+
+
+
                                                         <div class="flex items-center justify-between p-2 rounded hover:bg-gray-800 transition">
-                                                            <div class="flex items-center gap-3">
+                                                            <div class="flex items-center gap-3" @click="toggleSongSelection(song.id)">
                                                                 {{-- Checkbox visual --}}
                                                                 <div class="checkbox" :class="{ 'checked': isSongSelected(song.id) }">
                                                                     <span x-show="isSongSelected(song.id)">✓</span>
@@ -133,12 +136,22 @@
                                                                     </p>
                                                                 </div>
                                                             </div>
-                                                            
-                                                            {{-- Duración --}}
-                                                            <div class="text-xs text-gray-500">
-                                                                <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
+                                                             <div class="flex items-center gap-3">
+                                                                {{-- Duración --}}
+                                                                <div class="text-xs text-gray-500">
+                                                                    <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
+                                                                </div>
+                                                                
+                                                                {{-- Botón de favorito --}}
+                                                                <button 
+                                                                    @click.stop="toggleFavorite(song.id)"
+                                                                    class="favorite-btn"
+                                                                    :class="{ 'active': isFavorite(song.id) }"
+                                                                    title="Add to favorites">
+                                                                    <span x-text="isFavorite(song.id) ? '⭐' : '☆'"></span>
+                                                                </button>
                                                             </div>
-                                                        </div>
+                                                        </div>                                                      
                                                     </div>
                                                 </template>
                                             </div>
@@ -178,24 +191,69 @@
                                         <p class="text-xs md:text-sm">Choose MOTO or CAR to see the catalog</p>
                                     </div>
                                 </template>
-                            </div>
-                            <div class="favorites">
-                                <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITES</h3>
-                                
-                                <div class="empty-state">
-                                    <p class="empty-state-icon">💖</p>
-                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-pink">NO FAVORITES</p>
-                                    <p class="text-xs md:text-sm">You don't have any favorite songs yet</p>
-                                </div>
+                            </div> 
 
-                                <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-cyan">📖 HOW TO USE</h4>
-                                <ol class="list-decimal list-inside text-xs md:text-sm instructions-list">
-                                    <li>Use the traffic light to select quantity (1, 3 or 5 songs)</li>
-                                    <li>Choose the mode: Moto for individual songs or Car for full artist</li>
-                                    <li>Select songs from the catalog</li>
-                                    <li>Play your selection with the controls</li>
-                                </ol>
+
+
+<div class="favorites">
+    <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITES</h3>
+    
+    {{-- Si tiene favoritos --}}
+    <template x-if="favoriteSongs.length > 0">
+        <div class="space-y-2">
+            <template x-for="song in favoriteSongs" :key="'fav-' + song.id">
+                <div class="favorite-song-item">
+                    <div class="flex items-center justify-between p-2 rounded hover:bg-gray-800 transition">
+                        <div class="flex items-center gap-3">
+                            {{-- Info de la canción --}}
+                            <div>
+                                <p class="font-neon text-sm text-neon-pink" x-text="song.title"></p>
+                                <p class="text-xs text-gray-400">
+                                    <span x-text="song.artist_name"></span> • 
+                                    <span x-text="song.style"></span>
+                                </p>
                             </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            {{-- Duración --}}
+                            <div class="text-xs text-gray-500">
+                                <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
+                            </div>
+                            
+                            {{-- Botón para quitar de favoritos --}}
+                            <button 
+                                @click="toggleFavorite(song.id)"
+                                class="favorite-btn active"
+                                title="Remove from favorites">
+                                <span>⭐</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+    
+    {{-- Si NO tiene favoritos --}}
+    <template x-if="favoriteSongs.length === 0">
+        <div class="empty-state">
+            <p class="empty-state-icon">💖</p>
+            <p class="font-neon text-lg md:text-xl empty-state-title text-neon-pink">NO FAVORITES</p>
+            <p class="text-xs md:text-sm">Click ☆ on any song to add it to favorites</p>
+        </div>
+    </template>
+    
+    <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-cyan mt-4">📖 HOW TO USE</h4>
+    <ol class="list-decimal list-inside text-xs md:text-sm instructions-list">
+        <li>Use the traffic light to select quantity (1, 3 or 5 songs)</li>
+        <li>Choose the mode: Moto for individual songs or Car for full artist</li>
+        <li>Select songs from the catalog or favorites</li>
+        <li>Play your selection with the controls</li>
+    </ol>
+</div>
+
+
                         </div>
 
                         <!-- Search -->
@@ -327,6 +385,8 @@ function jukeboxApp() {
         availableSongs: @json($allSongs),
         availableArtists: @json($allArtists),
         songsByArtist: @json($songsByArtist),
+        favoriteSongs: @json($favoriteSongs), 
+        favoriteIds: @json($favoriteIds), 
         
         // Inicialización
         init() {
@@ -445,6 +505,50 @@ function jukeboxApp() {
             roadLine.classList.remove('moving');
             motoLight.classList.remove('on');
             carLight.classList.remove('on');
+        },
+        
+        // Verificar si canción es favorita
+        isFavorite(songId) {
+            return this.favoriteIds.includes(songId);
+        },
+
+        // Toggle favorito (agregar o quitar)
+        async toggleFavorite(songId) {
+            try {
+                const response = await fetch('/favorites/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ music_song_id: songId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'added') {
+                    this.favoriteIds.push(songId);
+                    console.log('⭐ Added to favorites:', songId);
+                    
+                    // Agregar a la lista de favoritos
+                    const song = this.availableSongs.find(s => s.id === songId);
+                    if (song) {
+                        this.favoriteSongs.unshift(song);
+                    }
+                } else {
+                    const index = this.favoriteIds.indexOf(songId);
+                    if (index > -1) {
+                        this.favoriteIds.splice(index, 1);
+                    }
+                    console.log('💔 Removed from favorites:', songId);
+                    
+                    // Quitar de la lista de favoritos
+                    this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                }
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                alert('Error updating favorites');
+            }
         }
     }
 }
