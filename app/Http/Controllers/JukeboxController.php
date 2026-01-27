@@ -90,7 +90,26 @@ class JukeboxController extends Controller
                 })->values();
             });
 
-        // Current song playing
+        // Obtener favoritos del usuario
+        $favoriteSongs = $user->favoriteSongs()
+            ->with(['artist', 'musicalStyle'])
+            ->orderBy('favorite_songs.created_at', 'desc')
+            ->get()
+            ->map(function($song) {
+                return [
+                    'id' => $song->id,
+                    'title' => $song->title,
+                    'artist_name' => $song->artist->name,
+                    'style' => $song->musicalStyle->name,
+                    'length' => $song->length,
+                    'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
+                ];
+            });
+
+        // IDs de canciones favoritas
+        $favoriteIds = $favoriteSongs->pluck('id')->toArray();
+
+        // Cancion actual
         $currentSong = null;
 
         return view('dashboard', compact(
@@ -100,7 +119,9 @@ class JukeboxController extends Controller
             'userMoney',
             'allSongs',
             'allArtists',
-            'songsByArtist'
+            'songsByArtist',
+            'favoriteSongs',
+            'favoriteIds'
         ));
     }
 
