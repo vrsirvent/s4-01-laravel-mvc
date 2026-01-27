@@ -19,7 +19,7 @@ class User extends Authenticatable
         'email',
         'password',
         'other_information', 
-        'Money',
+        'money',
 
     ];
 
@@ -39,7 +39,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'Money' => 'decimal:2', 
+            'money' => 'decimal:2', 
         ];
     }
 
@@ -87,7 +87,7 @@ class User extends Authenticatable
      */
     public function hasEnoughMoney($amount)
     {
-        return $this->Money >= $amount;
+        return $this->money >= $amount;
     }
 
 }

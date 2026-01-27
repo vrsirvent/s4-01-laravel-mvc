@@ -29,7 +29,8 @@
 
                     <div class="credits">
                         <p class="credits-label">CREDIT:</p>
-                        <p class="credits-amount">${{ number_format(Auth::user()->money ?? 0, 2) }}</p>
+                        <!-- <p class="credits-amount">€{{ number_format(Auth::user()->money ?? 0, 2) }}</p> (this option has not worked) -->
+                        <p class="credits-amount">€{{ number_format($userMoney, 2) }}</p>
                     </div>
                 </div>
 
@@ -118,7 +119,7 @@
                             </div>
                         </div>
 
-                        <!-- BUSCADOR -->
+                        <!-- Search -->
                         <div class="mt-4 md:mt-6 mb-4 md:mb-6 search-container-green">
                             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                 <input type="text" placeholder="🔍 Search songs..." class="search-input-green w-full sm:flex-1">
@@ -127,36 +128,39 @@
                         </div>
 
                         <div class="mt-4 md:mt-6 fichas-container">
-                            <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MY TICKETS</h3>
-                            
+                            <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MY TICKETS</h3>                                                      
                             <div class="flex flex-wrap justify-center md:justify-around items-center gap-4 md:gap-6">
+                                {{-- MOTO 1 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-red">🏍️ MOTO 1</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-red">0</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-red">{{ $tokenCounts['moto_1'] ?? 0 }}</p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
 
+                                {{-- MOTO 3 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-yellow">🏍️ MOTO 3</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-yellow">0</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-yellow">{{ $tokenCounts['moto_3'] ?? 0 }}</p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
 
+                                {{-- MOTO 5 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-green">🏍️ MOTO 5</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-green">0</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-green">{{ $tokenCounts['moto_5'] ?? 0 }}</p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
                                 <div class="separator-vertical separator-50 hidden md:block"></div>
 
+                                {{-- CAR --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-purple">🚗 CAR</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-purple">0</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-purple">{{ $tokenCounts['car'] ?? 0 }}</p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
                             </div>
@@ -166,41 +170,40 @@
                             <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎟️ BUY TOKENS</h3>
                             
                             <div class="flex flex-wrap justify-center md:justify-around items-center gap-4 md:gap-6">
-                                <div class="compra-item w-full sm:w-auto">
-                                    <p class="compra-label text-sm md:text-base text-neon-red">🏍️ MOTO 1</p>
-                                    <p class="compra-description">1 song</p>
-                                    <p class="compra-price text-lg md:text-xl">€ 100.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
-                                </div>
+                                @foreach($availableTokens as $index => $token)
+                                    @php
+                                        // Token type
+                                        $colors = [
+                                            'moto_1' => 'red',
+                                            'moto_3' => 'yellow',
+                                            'moto_5' => 'green',
+                                            'car' => 'purple'
+                                        ];
+                                        $color = $colors[$token->name] ?? 'cyan';
+                                        
+                                        // Icon type
+                                        $icon = str_starts_with($token->name, 'moto') ? '🏍️' : '🚗';
+                                        
+                                        // Description
+                                        $description = $token->song_quantity == 0 
+                                            ? 'Complete artist' 
+                                            : $token->song_quantity . ' song' . ($token->song_quantity > 1 ? 's' : '');
+                                    @endphp
+                                    
+                                    {{-- Separator --}}
+                                    @if($index > 0)
+                                        <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
+                                    @endif
+                                    
+                                    <div class="compra-item w-full sm:w-auto">
+                                        <p class="compra-label text-sm md:text-base text-neon-{{ $color }}">{{ $icon }} {{ strtoupper($token->name) }}</p>
+                                        <p class="compra-description">{{ $description }}</p>
+                                        <p class="compra-price text-lg md:text-xl">€ {{ number_format($token->price, 2) }}</p>
+                                        <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKEN</button>
+                                    </div>
+                                @endforeach
+                            </div>                            
 
-                                <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
-
-                                <div class="compra-item w-full sm:w-auto">
-                                    <p class="compra-label text-sm md:text-base text-neon-yellow">🏍️ MOTO 3</p>
-                                    <p class="compra-description">3 songs</p>
-                                    <p class="compra-price text-lg md:text-xl">€ 250.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
-                                </div>
-
-                                <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
-
-                                <div class="compra-item w-full sm:w-auto">
-                                    <p class="compra-label text-sm md:text-base text-neon-green">🏍️ MOTO 5</p>
-                                    <p class="compra-description">5 songs</p>
-                                    <p class="compra-price text-lg md:text-xl">€ 400.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
-                                </div>
-
-                                <div class="separator-vertical separator-vertical-cyan separator-70 hidden md:block"></div>
-
-                                <div class="compra-item w-full sm:w-auto">
-                                    <p class="compra-label text-sm md:text-base text-neon-purple">🚗 CAR</p>
-                                    <p class="compra-description">Complete artist</p>
-                                    <p class="compra-price text-lg md:text-xl">€ 500.00</p>
-                                    <button class="control-btn text-xs sm:text-sm w-full sm:w-auto btn-padding-md">BUY TOKENS</button>
-                                </div>
-                            </div>
-                            
                             <div class="mt-3 md:mt-4 info-box text-center">
                                 <p class="text-xs md:text-sm text-gray-light">
                                     💡 Buy tokens with your credits to play music on the jukebox
