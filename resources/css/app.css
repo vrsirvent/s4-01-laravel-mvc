@@ -655,6 +655,34 @@ body > * {
     border: 2px solid var(--neon-purple);
     border-radius: 15px;
     padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* scroll */
+.catalog::-webkit-scrollbar,
+.favorites::-webkit-scrollbar {
+    width: 8px;
+}
+
+.catalog::-webkit-scrollbar-track,
+.favorites::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.catalog::-webkit-scrollbar-thumb,
+.favorites::-webkit-scrollbar-thumb {
+    background: var(--neon-cyan);
+    border-radius: 4px;
+    box-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.catalog::-webkit-scrollbar-thumb:hover,
+.favorites::-webkit-scrollbar-thumb:hover {
+    background: #00dddd;
+    box-shadow: 0 0 10px var(--neon-cyan);
 }
 
 .favorites {
@@ -1889,4 +1917,57 @@ body > * {
     .traffic-pole {
         width: 6px !important;
     }
+
+    /* Catálogo - Checkboxes */
+    .checkbox {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #00ffff;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #00ffff;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox.checked {
+        background: #00ffff;
+        color: #000;
+        box-shadow: 0 0 10px #00ffff;
+    }
+
+    /* Canción seleccionada */
+    .song-item.selected {
+        background: rgba(0, 255, 255, 0.1);
+        border-left: 3px solid #00ffff;
+    }
+
+    /* Artista seleccionado */
+    .artist-item.selected {
+        border-left: 3px solid #ff00ff;
+    }
+
+    /* Hover effects */
+    .song-item:hover {
+        transform: translateX(5px);
+        transition: transform 0.2s ease;
+    }
+
+    .artist-item:hover {
+        transform: translateX(5px);
+        transition: transform 0.2s ease;
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
