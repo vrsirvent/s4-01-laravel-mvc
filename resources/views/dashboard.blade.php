@@ -15,7 +15,7 @@
             </div>
         @endif
         
-        <div class="jukebox max-w-7xl mx-auto">
+        <div class="jukebox max-w-7xl mx-auto" x-data="jukeboxApp()" x-init="init()">
                 
                 <div class="jukebox-top">
                     <div class="top-arch"></div>
@@ -64,16 +64,16 @@
 
                             <div class="traffic-box">
                                 <div class="traffic-lights">
-                                    <div class="traffic-light red active" onclick="selectQuantity(1)">1</div>
-                                    <div class="traffic-light yellow" onclick="selectQuantity(3)">3</div>
-                                    <div class="traffic-light green" onclick="selectQuantity(5)">5</div>
+                                    <div class="traffic-light red active" @click="selectQuantity(1)">1</div>
+                                    <div class="traffic-light yellow" @click="selectQuantity(3)">3</div>
+                                    <div class="traffic-light green" @click="selectQuantity(5)">5</div>
                                 </div>
                                 <div class="traffic-pole"></div>
                             </div>
 
                             <div class="controls">
-                                <button class="control-btn" onclick="togglePlay()">▶️ PLAY</button>
-                                <button class="control-btn" onclick="pausePlay()">⏸️ PAUSE</button>
+                                <button class="control-btn" @click="togglePlay()">▶️ PLAY</button>
+                                <button class="control-btn" @click="pausePlay()">⏸️ PAUSE</button>
                                 <button class="control-btn">⏭️ NEXT</button>
                                 <button class="control-btn">🔀 SHUFFLE</button>
                             </div>
@@ -85,14 +85,14 @@
                             </div>
 
                             <div class="vehicles">
-                                <div class="vehicle moto active" id="vehicleMoto" onclick="selectMode('moto')">
+                                <div class="vehicle moto active" id="vehicleMoto" @click="selectMode('moto')">
                                     <div class="moto-body"></div>
                                     <div class="moto-wheel back"></div>
                                     <div class="moto-wheel front"></div>
                                     <div class="moto-light" id="motoLight"></div>
                                 </div>
 
-                                <div class="vehicle car" id="vehicleCar" onclick="selectMode('car')">
+                                <div class="vehicle car" id="vehicleCar" @click="selectMode('car')">
                                     <div class="car-roof"></div>
                                     <div class="car-body"></div>
                                     <div class="car-wheel back"></div>
@@ -107,13 +107,78 @@
                             <div class="catalog">
                                 <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎵 CATALOG</h3>
                                 
-                                <div class="empty-state">
-                                    <p class="empty-state-icon">🎵</p>
-                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">COMING SOON</p>
-                                    <p class="text-xs md:text-sm">The catalog will be available soon</p>
-                                </div>
+                                {{-- MODO MOTO: Mostrar canciones --}}
+                                <template x-if="selectedMode === 'moto'">
+                                    <div>
+                                        <template x-if="availableSongs.length > 0">
+                                            <div class="space-y-2">
+                                                <template x-for="song in availableSongs" :key="song.id">
+                                                    <div class="song-item" 
+                                                        :class="{ 'selected': isSongSelected(song.id) }"
+                                                        @click="toggleSongSelection(song.id)"
+                                                        style="cursor: pointer;">
+                                                        <div class="flex items-center justify-between p-2 rounded hover:bg-gray-800 transition">
+                                                            <div class="flex items-center gap-3">
+                                                                {{-- Checkbox visual --}}
+                                                                <div class="checkbox" :class="{ 'checked': isSongSelected(song.id) }">
+                                                                    <span x-show="isSongSelected(song.id)">✓</span>
+                                                                </div>
+                                                                
+                                                                {{-- Info de la canción --}}
+                                                                <div>
+                                                                    <p class="font-neon text-sm text-neon-cyan" x-text="song.title"></p>
+                                                                    <p class="text-xs text-gray-400">
+                                                                        <span x-text="song.artist_name"></span> • 
+                                                                        <span x-text="song.style"></span>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            {{-- Duración --}}
+                                                            <div class="text-xs text-gray-500">
+                                                                <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                
+                                {{-- MODO CAR: Mostrar artistas --}}
+                                <template x-if="selectedMode === 'car'">
+                                    <div>
+                                        <template x-if="availableArtists.length > 0">
+                                            <div class="space-y-2">
+                                                <template x-for="artist in availableArtists" :key="artist.id">
+                                                    <div class="artist-item"
+                                                        :class="{ 'selected': selectedArtist === artist.id }"
+                                                        @click="selectArtist(artist.id)"
+                                                        style="cursor: pointer;">
+                                                        <div class="p-3 rounded hover:bg-gray-800 transition"
+                                                            :class="{ 'bg-gray-700': selectedArtist === artist.id }">
+                                                            <p class="font-neon text-base text-neon-purple" x-text="artist.name"></p>
+                                                            <p class="text-xs text-gray-400">
+                                                                <span x-text="artist.songs_count"></span> songs
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                
+                                {{-- Estado vacío (cuando no hay modo seleccionado aún) --}}
+                                <template x-if="!selectedMode">
+                                    <div class="empty-state">
+                                        <p class="empty-state-icon">🎵</p>
+                                        <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">SELECT MODE</p>
+                                        <p class="text-xs md:text-sm">Choose MOTO or CAR to see the catalog</p>
+                                    </div>
+                                </template>
                             </div>
-
                             <div class="favorites">
                                 <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITES</h3>
                                 
@@ -246,18 +311,43 @@
         </div>
     </div>
 
-    <script>
-        let selectedQuantity = 1;
-        let selectedMode = 'moto';
-        let isPlaying = false;
-
-        function selectQuantity(quantity) {
-            selectedQuantity = quantity;
+<script>
+function jukeboxApp() {
+    return {
+        // Estado
+        selectedMode: 'moto',
+        selectedQuantity: 1,
+        selectedSongs: [],
+        selectedArtist: null,
+        isPlaying: false,
+        isLocked: false,
+        
+        // Datos desde Blade
+        userTokens: @json($tokenCounts),
+        availableSongs: @json($allSongs),
+        availableArtists: @json($allArtists),
+        songsByArtist: @json($songsByArtist),
+        
+        // Inicialización
+        init() {
+            console.log('🎵 Jukebox initialized');
+            console.log('📊 Songs:', this.availableSongs.length);
+            console.log('🎤 Artists:', this.availableArtists.length);
+            console.log('🎫 Tokens:', this.userTokens);
+        },
+        
+        // Seleccionar cantidad (semáforo)
+        selectQuantity(quantity) {
+            if (this.isLocked) return;
+            
+            this.selectedQuantity = quantity;
+            this.selectedSongs = [];
+            
             document.querySelectorAll('.traffic-light').forEach(light => light.classList.remove('active'));
             
             if (quantity === 1) {
                 document.querySelector('.traffic-light.red').classList.add('active');
-                document.getElementById('quantityText').textContent = '🔴 1 SONGS';
+                document.getElementById('quantityText').textContent = '🔴 1 SONG';
             } else if (quantity === 3) {
                 document.querySelector('.traffic-light.yellow').classList.add('active');
                 document.getElementById('quantityText').textContent = '🟡 3 SONGS';
@@ -265,28 +355,73 @@
                 document.querySelector('.traffic-light.green').classList.add('active');
                 document.getElementById('quantityText').textContent = '🟢 5 SONGS';
             }
-        }
-
-        function selectMode(mode) {
-            selectedMode = mode;
+            
+            console.log('🚦 Quantity:', quantity);
+        },
+        
+        // Seleccionar modo (vehículo)
+        selectMode(mode) {
+            if (this.isLocked) return;
+            
+            this.selectedMode = mode;
+            this.selectedSongs = [];
+            this.selectedArtist = null;
+            
             document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
             
             if (mode === 'moto') {
                 document.getElementById('vehicleMoto').classList.add('active');
                 document.getElementById('modeText').textContent = '🏍️ MOTO (SONGS)';
+                console.log('🏍️ MOTO mode');
             } else {
                 document.getElementById('vehicleCar').classList.add('active');
                 document.getElementById('modeText').textContent = '🚗 CAR (COMPLETE ARTIST)';
+                console.log('🚗 CAR mode');
             }
-        }
-
-        function togglePlay() {
-            isPlaying = !isPlaying;
+        },
+        
+        // Seleccionar canción (modo MOTO)
+        toggleSongSelection(songId) {
+            if (this.isLocked) return;
+            
+            const index = this.selectedSongs.indexOf(songId);
+            
+            if (index > -1) {
+                this.selectedSongs.splice(index, 1);
+                console.log('❌ Deselected:', songId);
+            } else {
+                if (this.selectedSongs.length < this.selectedQuantity) {
+                    this.selectedSongs.push(songId);
+                    console.log('✅ Selected:', songId);
+                } else {
+                    alert(`You can only select ${this.selectedQuantity} songs`);
+                }
+            }
+        },
+        
+        // Verificar si canción está seleccionada
+        isSongSelected(songId) {
+            return this.selectedSongs.includes(songId);
+        },
+        
+        // Seleccionar artista (modo CAR)
+        selectArtist(artistId) {
+            if (this.isLocked) return;
+            this.selectedArtist = artistId;
+            console.log('🎤 Artist selected:', artistId);
+        },
+        
+        // Botón PLAY
+        togglePlay() {
+            console.log('▶️ PLAY');
+            
             const roadLine = document.getElementById('roadLine');
             const motoLight = document.getElementById('motoLight');
             const carLight = document.getElementById('carLight');
             
-            if (isPlaying) {
+            this.isPlaying = !this.isPlaying;
+            
+            if (this.isPlaying) {
                 roadLine.classList.add('moving');
                 motoLight.classList.add('on');
                 carLight.classList.add('on');
@@ -295,10 +430,14 @@
                 motoLight.classList.remove('on');
                 carLight.classList.remove('on');
             }
-        }
-
-        function pausePlay() {
-            isPlaying = false;
+        },
+        
+        // Botón PAUSE
+        pausePlay() {
+            console.log('⏸️ PAUSE');
+            
+            this.isPlaying = false;
+            
             const roadLine = document.getElementById('roadLine');
             const motoLight = document.getElementById('motoLight');
             const carLight = document.getElementById('carLight');
@@ -307,6 +446,8 @@
             motoLight.classList.remove('on');
             carLight.classList.remove('on');
         }
-    </script>
+    }
+}
+</script>
 </x-app-layout>
 

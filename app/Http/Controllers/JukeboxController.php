@@ -40,63 +40,111 @@ class JukeboxController extends Controller
             
             $tokenCounts[$token->name] = $activeTokens;
         }
-        
-        // User credit (Auth::user()->money) > this option has not worked
-        // User credit (read direct database)
+
+        // User credit (read DB)
         $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
-        
-        // Current song
+
+        // MOTO - have all songs
+        $allSongs = \App\Models\MusicSong::with(['artist', 'musicalStyle'])
+            ->orderBy('title')
+            ->get()
+            ->map(function($song) {
+                return [
+                    'id' => $song->id,
+                    'title' => $song->title,
+                    'artist_name' => $song->artist->name,
+                    'style' => $song->musicalStyle->name,
+                    'length' => $song->length,
+                    'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
+                ];
+            });
+
+        // CAR - have all artists
+        $allArtists = \App\Models\Artist::has('musicSongs')
+            ->withCount('musicSongs')
+            ->orderBy('name')
+            ->get()
+            ->map(function($artist) {
+                return [
+                    'id' => $artist->id,
+                    'name' => $artist->name,
+                    'songs_count' => $artist->music_songs_count,
+                    'description' => $artist->description,
+                ];
+            });
+
+        //  CAR - have songs by artist (grouped)
+        $songsByArtist = \App\Models\MusicSong::with(['artist', 'musicalStyle'])
+            ->get()
+            ->groupBy('artist_id')
+            ->map(function($songs) {
+                return $songs->map(function($song) {
+                    return [
+                        'id' => $song->id,
+                        'title' => $song->title,
+                        'artist_name' => $song->artist->name,
+                        'style' => $song->musicalStyle->name,
+                        'length' => $song->length,
+                        'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
+                    ];
+                })->values();
+            });
+
+        // Current song playing
         $currentSong = null;
-        
+
         return view('dashboard', compact(
             'availableTokens',
             'tokenCounts',
             'currentSong',
-            'userMoney'
+            'userMoney',
+            'allSongs',
+            'allArtists',
+            'songsByArtist'
         ));
     }
 
     /**
-     * Procesar la compra de un token
+     * Buy token process
      */
     public function purchaseToken(Request $request)
     {
         $user = Auth::user();
         
-        // Validar que se envió el ID del token
+        // Validate that the token ID was sent
         $request->validate([
             'jukebox_token_id' => 'required|exists:jukebox_tokens,id'
         ]);
         
-        // Obtener el token que quiere comprar
+        //  Receive token you want to buy
         $token = JukeboxToken::findOrFail($request->jukebox_token_id);
         
-        // Obtener saldo actual del usuario
+        // Receive current user's balance
         $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
         
-        // Validar que tenga saldo suficiente
+        // Validate that the user has sufficient funds
         if ($userMoney < $token->price) {
             return redirect()->route('dashboard')
                 ->with('error', 'Insufficient balance. You need €' . number_format($token->price, 2) . ' but you only have €' . number_format($userMoney, 2));
         }
-        
-        // Validar que haya stock disponible
+
+        // Validate that there is stock available
         if ($token->stock <= 0) {
             return redirect()->route('dashboard')
                 ->with('error', 'This token is out of stock.');
         }
         
-        // Realizar la compra (transacción)
+        // Complete the purchase (transaction)
         \DB::transaction(function () use ($user, $token) {
-            // 1. Restar dinero al usuario
+            // Subtract money from the user
             \DB::table('users')
                 ->where('id', $user->id)
                 ->decrement('money', $token->price);
             
-            // 2. Restar stock del token
+            // 2. Subtract stock from the token
             $token->decrement('stock');
             
-            // 3. Crear registro en user_tokens
+            // 3. Create record in user_tokens
             UserToken::create([
                 'user_id' => $user->id,
                 'jukebox_token_id' => $token->id,
