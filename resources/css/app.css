@@ -1050,6 +1050,84 @@ body > * {
     padding-bottom: 0px !important;
 }
 
+/* Catalog - Checkboxes */
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #00ffff;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ffff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.checkbox.checked {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+.song-item.selected {
+    background: rgba(0, 255, 255, 0.1);
+    border-left: 3px solid #00ffff;
+}
+
+.artist-item.selected {
+    border-left: 3px solid #ff00ff;
+}
+
+.song-item:hover {
+    transform: translateX(5px);
+    transition: transform 0.2s ease;
+}
+
+.artist-item:hover {
+    transform: translateX(5px);
+    transition: transform 0.2s ease;
+}
+
+.favorite-btn {
+    font-size: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+    line-height: 1;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+.favorite-btn.active {
+    filter: drop-shadow(0 0 5px #ffff00);
+    animation: pulse-star 2s infinite;
+}
+
+@keyframes pulse-star {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.favorite-song-item {
+    border-left: 2px solid var(--neon-pink);
+    padding-left: 5px;
+}
+
+.favorite-song-item:hover {
+    background: rgba(255, 0, 255, 0.05);
+    transform: translateX(5px);
+    transition: all 0.2s ease;
+}
+
 /* == Auth Pages Styles == */
 .auth-logo-title {
     font-family: 'Bebas Neue', sans-serif;
@@ -1917,96 +1995,5 @@ body > * {
     .traffic-pole {
         width: 6px !important;
     }
-
-    /* Catálogo - Checkboxes */
-    .checkbox {
-        width: 20px;
-        height: 20px;
-        border: 2px solid #00ffff;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #00ffff;
-        font-size: 14px;
-        transition: all 0.3s ease;
-    }
-
-    .checkbox.checked {
-        background: #00ffff;
-        color: #000;
-        box-shadow: 0 0 10px #00ffff;
-    }
-
-    /* Canción seleccionada */
-    .song-item.selected {
-        background: rgba(0, 255, 255, 0.1);
-        border-left: 3px solid #00ffff;
-    }
-
-    /* Artista seleccionado */
-    .artist-item.selected {
-        border-left: 3px solid #ff00ff;
-    }
-
-    /* Hover effects */
-    .song-item:hover {
-        transform: translateX(5px);
-        transition: transform 0.2s ease;
-    }
-
-    .artist-item:hover {
-        transform: translateX(5px);
-        transition: transform 0.2s ease;
-    }
-
-/* Botón de favoritos */
-.favorite-btn {
-    font-size: 18px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 5px;
-    line-height: 1;
-}
-
-.favorite-btn:hover {
-    transform: scale(1.2);
-}
-
-.favorite-btn.active {
-    filter: drop-shadow(0 0 5px #ffff00);
-    animation: pulse-star 2s infinite;
-}
-
-@keyframes pulse-star {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-/* Favoritos - item */
-.favorite-song-item {
-    border-left: 2px solid var(--neon-pink);
-    padding-left: 5px;
-}
-
-.favorite-song-item:hover {
-    background: rgba(255, 0, 255, 0.05);
-    transform: translateX(5px);
-    transition: all 0.2s ease;
-}
-
-
-
-
-
-
-
-
 
 }

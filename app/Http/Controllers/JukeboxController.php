@@ -90,7 +90,7 @@ class JukeboxController extends Controller
                 })->values();
             });
 
-        // Obtener favoritos del usuario
+        // Have user's favorite songs
         $favoriteSongs = $user->favoriteSongs()
             ->with(['artist', 'musicalStyle'])
             ->orderBy('favorite_songs.created_at', 'desc')
@@ -106,10 +106,10 @@ class JukeboxController extends Controller
                 ];
             });
 
-        // IDs de canciones favoritas
+        // IDs favorites songs
         $favoriteIds = $favoriteSongs->pluck('id')->toArray();
 
-        // Cancion actual
+        // Current song
         $currentSong = null;
 
         return view('dashboard', compact(
