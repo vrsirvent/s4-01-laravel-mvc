@@ -12,13 +12,13 @@ class UserToken extends Model
     protected $fillable = [
         'user_id',
         'jukebox_token_id',
-        'quantity',
+        'songs_used',
     ];
 
     protected $casts = [
         'user_id' => 'integer',
         'jukebox_token_id' => 'integer',
-        'quantity' => 'integer',
+        'songs_used' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -45,7 +45,8 @@ class UserToken extends Model
      */
     public function hasRemainingSongs()
     {
-        return $this->quantity > 0;
+        $maxSongs = $this->jukeboxToken->song_quantity ?? 0;
+        return $this->songs_used < $maxSongs;
     }
 
     /**
@@ -54,8 +55,9 @@ class UserToken extends Model
      */
     public function useSong()
     {
-        if ($this->quantity > 0) {
-            $this->quantity--;
+        $maxSongs = $this->jukeboxToken->song_quantity ?? 0;
+        if ($this->songs_used < $maxSongs) {
+            $this->songs_used++;
             return $this->save();
         }
         return false;
@@ -75,7 +77,7 @@ class UserToken extends Model
     /* Scope: Only active tokens (with remaining songs)*/
     public function scopeActive($query)
     {
-        return $query->where('quantity', '>', 0);
+        return $query->whereRaw('songs_used < (SELECT song_quantity FROM jukebox_tokens WHERE jukebox_tokens.id = user_tokens.jukebox_token_id)');
     }
 
 }

@@ -173,8 +173,7 @@ class JukeboxController extends Controller
             ]);
         });
         
-        return redirect()->route('dashboard')
-            ->with('success', 'Token purchased successfully! You bought ' . strtoupper($token->name) . ' for €' . number_format($token->price, 2));
+        return redirect()->route('dashboard');
     }
 
 }

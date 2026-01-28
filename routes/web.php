@@ -19,6 +19,10 @@ Route::post('/favorites/toggle', [App\Http\Controllers\FavoriteController::class
     ->middleware(['auth', 'verified'])
     ->name('favorites.toggle');
 
+Route::post('/player/consume-token', [App\Http\Controllers\PlayerController::class, 'consumeToken'])
+    ->middleware(['auth', 'verified'])
+    ->name('player.consume');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
