@@ -1,11 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-neon text-2xl md:text-3xl text-neon-cyan text-shadow-cyan">
-            CATÁLOGO DE CANCIONES
-        </h2>
-    </x-slot>
-
-    <div class="py-4 md:py-8">
+    <div class="py-4 md:py-8" x-data="songCatalog()">
         <div class="container mx-auto px-2 md:px-4">
             <div class="jukebox max-w-7xl mx-auto">
                 
@@ -22,19 +16,14 @@
                         </div>
                     </div>
                     <div class="jukebox-title">
-                        <h1>CANCIONES</h1>
-                        <p class="subtitle">Explora nuestro catálogo musical</p>
-                    </div>
-
-                    <div class="info-panel">
-                        <p class="text-xs text-gray-400">Total en catálogo:</p>
-                        <p class="font-neon text-xl md:text-2xl text-neon-cyan">0</p>
-                        <p class="text-xs text-gray-400 mt-1">canciones</p>
+                        <h1>SONGS CATALOG</h1>
+                        <p class="subtitle">Explore our musical catalog</p>
                     </div>
 
                     <div class="credits">
-                        <p class="credits-label">CRÉDITOS:</p>
-                        <p class="credits-amount">${{ number_format(Auth::user()->money ?? 0, 2) }}</p>
+                        <p class="text-xs text-gray-400">Total in catalog:</p>
+                        <p class="font-neon text-xl md:text-2xl text-neon-cyan" x-text="filteredSongs.length"></p>
+                        <p class="text-xs text-gray-400 mt-1">songs</p>
                     </div>
                 </div>
 
@@ -45,37 +34,73 @@
                     </div>
 
                     <div class="flex-1 p-3 md:p-6">
+                        
+                        {{-- Music styles --}}
+                        <div class="mb-4 md:mb-6 filter-container">
+                            <p class="font-neon mb-3 text-center text-sm md:text-base text-neon-yellow">SORT BY MUSIC STYLE:</p>
+                            <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                                <button @click="selectStyle(null)" 
+                                    :class="{ 'active': selectedStyle === null }"
+                                    class="control-btn text-xs sm:text-sm btn-padding-sm">ALL</button>
+                                
+                                {{-- Music styles: Buttons from backend --}}
+                                @if(isset($allSongs) && $allSongs->isNotEmpty())
+                                    @php
+                                        $styles = $allSongs->pluck('style')->unique()->sort()->values();
+                                    @endphp
+                                    @foreach($styles as $style)
+                                        <button @click="selectStyle('{{ $style }}')" 
+                                            :class="{ 'active': selectedStyle === '{{ $style }}' }"
+                                            class="control-btn text-xs sm:text-sm btn-padding-sm">{{ strtoupper($style) }}</button>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Song catalog --}}
+                        <div class="catalog">
+                            <h3 class="section-title section-title-cyan text-base md:text-lg mb-3">⭐ FULL CATALOG ⭐</h3>
+                            
+                            {{-- Container with fixed height and scroll --}}
+                            <div class="h-96 overflow-y-auto pr-2" style="scrollbar-width: thin; scrollbar-color: rgba(34, 211, 238, 0.5) rgba(17, 24, 39, 0.5);">
+                                <template x-if="filteredSongs.length > 0">
+                                    <div class="space-y-2">
+                                        <template x-for="song in filteredSongs" :key="song.id">
+                                            <div class="song-item">
+                                                <div class="song-item-inner">
+                                                    <div class="flex-1">
+                                                        <p class="font-neon text-base text-neon-cyan" x-text="song.title"></p>
+                                                        <p class="text-xs text-gray-400">
+                                                            <span x-text="song.artist_name"></span> • 
+                                                            <span x-text="song.style"></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                
+                                <template x-if="filteredSongs.length === 0">
+                                    <div class="empty-state">
+                                        <p class="empty-state-icon">🎵</p>
+                                        <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">NO SONGS FOUND</p>
+                                        <p class="text-sm md:text-base">No songs found with the selected filter</p>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- Search UNDER CONSTRUCTION --}}
                         <div class="mt-4 md:mt-6 mb-4 md:mb-6 search-container-cyan">
                             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                <input type="text" placeholder="🔍 Buscar por título o artista..." class="search-input-cyan w-full sm:flex-1">
-                                <button class="control-btn w-full sm:w-auto btn-padding-lg">BUSCAR</button>
+                                <input type="text" 
+                                    placeholder="Search by title ...  (UNDER CONSTRUCTION)" 
+                                    class="search-input-cyan w-full sm:flex-1">
+                                <button class="control-btn w-full sm:w-auto btn-padding-lg">SEARCH</button>
                             </div>
                         </div>
 
-                        <div class="mb-4 md:mb-6 filter-container">
-                            <p class="font-neon mb-3 text-center text-sm md:text-base text-neon-yellow">FILTRAR POR ESTILO:</p>
-                            <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">TODOS</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">JAZZ</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">ROCK</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">BLUES</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">SOUL</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">SWING</button>
-                                <button class="control-btn text-xs sm:text-sm btn-padding-sm">POP</button>
-                            </div>
-                        </div>
-
-                        <div class="catalog">
-                            <h3 class="section-title section-title-cyan text-base md:text-lg mb-3">★ CATÁLOGO COMPLETO ★</h3>
-                            <div class="max-h-96 overflow-y-auto">
-                                <div class="empty-state">
-                                    <p class="empty-state-icon">🎵</p>
-                                    <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">CATÁLOGO VACÍO</p>
-                                    <p class="text-sm md:text-base">Las canciones estarán disponibles en la Parte 2 del proyecto</p>
-                                    <p class="text-xs text-gray-500 mt-4">Se mostrarán aquí todas las canciones con código, artista, estilo y reproducciones</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="side-panel hidden lg:flex">
@@ -86,13 +111,49 @@
 
                 <div class="footer-info">
                     <div class="max-w-3xl mx-auto text-center">
-                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">💡 INSTRUCCIÓN</p>
-                        <p class="text-xs md:text-sm text-gray-400">Navega por el catálogo, busca tus canciones favoritas y márcalas con ⭐</p>
+                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">INSTRUCTION</p>
+                        <p class="text-xs md:text-sm text-gray-400">Navigate the catalog, search for your favorite songs and filter by musical style</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+    function songCatalog() {
+        return {
+            allSongs: @json($allSongs ?? []),
+            filteredSongs: [],
+            selectedStyle: null,
+            availableStyles: [],
+            
+            init() {
+                // Extract unique styles (from the backend)
+                const stylesArray = this.allSongs.map(s => s.style);
+                console.log('🎨 All styles (with duplicates):', stylesArray);
+                console.log('🎨 Total songs:', this.allSongs.length);
+                
+                this.availableStyles = [...new Set(stylesArray)].sort();
+                console.log('🎨 Unique styles:', this.availableStyles);
+                console.log('🎨 Unique styles count:', this.availableStyles.length);
+                
+                // Show all songs initially
+                this.filteredSongs = this.allSongs;
+            },
+            
+            selectStyle(style) {
+                this.selectedStyle = style;
+                this.filterSongs();
+            },
+            
+            filterSongs() {
+                this.filteredSongs = this.selectedStyle === null
+                    ? this.allSongs
+                    : this.allSongs.filter(s => s.style === this.selectedStyle);
+            }
+        }
+    }
+    </script>
 </x-app-layout>
 
 
