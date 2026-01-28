@@ -2147,3 +2147,32 @@ body > * {
 .artist-item.disabled .artist-item-inner {
     cursor: not-allowed !important;
 }
+
+/* ========================================
+   SCROLLBAR STYLES - Para vistas de catálogo
+   ======================================== */
+
+/* Scrollbar para Webkit (Chrome, Safari, Edge) */
+.catalog > div::-webkit-scrollbar {
+    width: 8px;
+}
+
+.catalog > div::-webkit-scrollbar-track {
+    background: rgba(17, 24, 39, 0.5);
+    border-radius: 4px;
+}
+
+.catalog > div::-webkit-scrollbar-thumb {
+    background: rgba(34, 211, 238, 0.5);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.catalog > div::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 211, 238, 0.8);
+}
+
+/* Altura fija para el contenedor del catálogo */
+.catalog > div {
+    height: 24rem; /* h-96 = 384px = 24rem */
+}
