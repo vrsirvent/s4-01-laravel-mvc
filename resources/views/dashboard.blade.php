@@ -37,8 +37,8 @@
 
                     <div class="info-panel">
                         <p class="text-xs text-gray-400">Selección actual:</p>
-                        <p class="font-neon text-sm text-neon-red" id="quantityText">🔴 1 SONG</p>
-                        <p class="font-neon text-sm mt-1 text-neon-cyan" id="modeText">🏍️ MOTO (SONGS)</p>
+                        <p class="font-neon text-sm text-gray-500" id="quantityText">No selection</p>
+                        <p class="font-neon text-sm mt-1 text-gray-500" id="modeText">No mode</p>
                     </div>
 
                     <div class="credits">
@@ -63,9 +63,15 @@
 
                             <div class="traffic-box">
                                 <div class="traffic-lights">
-                                    <div class="traffic-light red active" @click="selectQuantity(1)">1</div>
-                                    <div class="traffic-light yellow" @click="selectQuantity(3)">3</div>
-                                    <div class="traffic-light green" @click="selectQuantity(5)">5</div>
+                                    <div class="traffic-light red" 
+                                        :class="{ 'disabled': selectedMode !== 'moto' }"
+                                        @click="selectedMode === 'moto' ? selectQuantity(1) : null">1</div>
+                                    <div class="traffic-light yellow" 
+                                        :class="{ 'disabled': selectedMode !== 'moto' }"
+                                        @click="selectedMode === 'moto' ? selectQuantity(3) : null">3</div>
+                                    <div class="traffic-light green" 
+                                        :class="{ 'disabled': selectedMode !== 'moto' }"
+                                        @click="selectedMode === 'moto' ? selectQuantity(5) : null">5</div>
                                 </div>
                                 <div class="traffic-pole"></div>
                             </div>
@@ -73,8 +79,8 @@
                             <div class="controls">
                                 <button class="control-btn" @click="togglePlay()">▶️ PLAY</button>
                                 <button class="control-btn" @click="pausePlay()">⏸️ PAUSE</button>
-                                <button class="control-btn">⏭️ NEXT</button>
-                                <button class="control-btn">🔀 SHUFFLE</button>
+                                <button class="control-btn" @click="playNext()" :disabled="!isPlaying">⏭️ NEXT</button>
+                                <!-- <button class="control-btn">🔀 SHUFFLE</button> -->
                             </div>
 
                             <div class="now-playing">
@@ -84,7 +90,7 @@
                             </div>
 
                             <div class="vehicles">
-                                <div class="vehicle moto active" id="vehicleMoto" @click="selectMode('moto')">
+                                <div class="vehicle moto" id="vehicleMoto" @click="selectMode('moto')">
                                     <div class="moto-body"></div>
                                     <div class="moto-wheel back"></div>
                                     <div class="moto-wheel front"></div>
@@ -107,86 +113,71 @@
                                 <h3 class="section-title section-title-cyan text-lg md:text-xl mb-3 md:mb-4">🎵 CATALOG</h3>
                                 
                                 {{-- MOTO: see songs --}}
-                                <template x-if="selectedMode === 'moto'">
-                                    <div>
-                                        <template x-if="availableSongs.length > 0">
-                                            <div class="space-y-2">
-                                                <template x-for="song in availableSongs" :key="song.id">
-                                                    <div class="song-item" 
-                                                        :class="{ 'selected': isSongSelected(song.id) }"
-                                                        @click="toggleSongSelection(song.id)"
-                                                        style="cursor: pointer;">
-                                                        <div class="flex items-center justify-between p-2 rounded hover:bg-gray-800 transition">
-                                                            <div class="flex items-center gap-3" @click="toggleSongSelection(song.id)">
-                                                                {{-- Checkbox visual --}}
-                                                                <div class="checkbox" :class="{ 'checked': isSongSelected(song.id) }">
-                                                                    <span x-show="isSongSelected(song.id)">✓</span>
-                                                                </div>
-                                                                
-                                                                {{-- song info --}}
-                                                                <div>
-                                                                    <p class="font-neon text-sm text-neon-cyan" x-text="song.title"></p>
-                                                                    <p class="text-xs text-gray-400">
-                                                                        <span x-text="song.artist_name"></span> • 
-                                                                        <span x-text="song.style"></span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                             <div class="flex items-center gap-3">
-                                                                {{-- Duration --}}
-                                                                <div class="text-xs text-gray-500">
-                                                                    <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
-                                                                </div>
-                                                                
-                                                                {{-- Favorite button --}}
-                                                                <button 
-                                                                    @click.stop="toggleFavorite(song.id)"
-                                                                    class="favorite-btn"
-                                                                    :class="{ 'active': isFavorite(song.id) }"
-                                                                    title="Add to favorites">
-                                                                    <span x-text="isFavorite(song.id) ? '⭐' : '☆'"></span>
-                                                                </button>
-                                                            </div>
-                                                        </div>                                                      
+                                <div x-show="selectedMode === 'moto'" x-cloak>
+                                    <div x-show="availableSongs.length > 0">
+                                        <div class="space-y-2">
+                                            <template x-for="song in availableSongs" :key="song.id">
+                                                <div class="song-item" 
+                                                    :class="{ 'selected': isSongSelected(song.id) }">
+                                                    <div class="song-item-inner"
+                                                        :class="{ 'bg-gray-700': isSongSelected(song.id) }">
+                                                        <div class="flex-1 song-selection-area"
+                                                            :class="{ 'disabled': !selectedQuantity }"
+                                                            @click="selectedQuantity ? toggleSongSelection(song.id) : null">
+                                                            <p class="font-neon text-base text-neon-cyan" x-text="song.title"></p>
+                                                            <p class="text-xs text-gray-400">
+                                                                <span x-text="song.artist_name"></span> • 
+                                                                <span x-text="song.style"></span>
+                                                            </p>
+                                                        </div>
+                                                        
+                                                        {{-- Favorite button - SIEMPRE ACTIVO --}}
+                                                        <button 
+                                                            @click.stop="addFavorite(song.id)"
+                                                            :disabled="isFavorite(song.id)"
+                                                            class="favorite-btn ml-3"
+                                                            :class="{ 'active': isFavorite(song.id) }"
+                                                            title="Add to favorites">
+                                                            <span x-text="isFavorite(song.id) ? '⭐' : '☆'"></span>
+                                                        </button>
                                                     </div>
-                                                </template>
-                                            </div>
-                                        </template>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
-                                </template>
+                                </div>
                                 
                                 {{-- CAR: see artists --}}
-                                <template x-if="selectedMode === 'car'">
-                                    <div>
-                                        <template x-if="availableArtists.length > 0">
-                                            <div class="space-y-2">
-                                                <template x-for="artist in availableArtists" :key="artist.id">
-                                                    <div class="artist-item"
-                                                        :class="{ 'selected': selectedArtist === artist.id }"
-                                                        @click="selectArtist(artist.id)"
-                                                        style="cursor: pointer;">
-                                                        <div class="p-3 rounded hover:bg-gray-800 transition"
-                                                            :class="{ 'bg-gray-700': selectedArtist === artist.id }">
+                                <div x-show="selectedMode === 'car'" x-cloak>
+                                    <div x-show="availableArtists.length > 0">
+                                        <div class="space-y-2">
+                                            <template x-for="artist in availableArtists" :key="artist.id">
+                                                <div class="artist-item"
+                                                    :class="{ 'selected': selectedArtist === artist.id }"
+                                                    @click.stop="selectArtist(artist.id)">
+                                                    <div class="artist-item-inner"
+                                                        :class="{ 'bg-gray-700': selectedArtist === artist.id }">
+                                                        <div class="flex-1">
                                                             <p class="font-neon text-base text-neon-purple" x-text="artist.name"></p>
                                                             <p class="text-xs text-gray-400">
                                                                 <span x-text="artist.songs_count"></span> songs
                                                             </p>
                                                         </div>
                                                     </div>
-                                                </template>
-                                            </div>
-                                        </template>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
-                                </template>
+                                </div>
                                 
                                 {{-- Empty (when no mode is selected yet) --}}
-                                <template x-if="!selectedMode">
+                                <div x-show="!selectedMode" x-cloak>
                                     <div class="empty-state">
                                         <p class="empty-state-icon">🎵</p>
                                         <p class="font-neon text-lg md:text-xl empty-state-title text-neon-cyan">SELECT MODE</p>
                                         <p class="text-xs md:text-sm">Choose MOTO or CAR to see the catalog</p>
                                     </div>
-                                </template>
+                                </div>
                             </div> 
                             <div class="favorites">
                                 <h3 class="section-title section-title-pink text-lg md:text-xl mb-3 md:mb-4">💖 FAVORITES</h3>
@@ -196,32 +187,22 @@
                                     <div class="space-y-2">
                                         <template x-for="song in favoriteSongs" :key="'fav-' + song.id">
                                             <div class="favorite-song-item">
-                                                <div class="flex items-center justify-between p-2 rounded hover:bg-gray-800 transition">
-                                                    <div class="flex items-center gap-3">
-                                                        {{-- Song info --}}
-                                                        <div>
-                                                            <p class="font-neon text-sm text-neon-pink" x-text="song.title"></p>
-                                                            <p class="text-xs text-gray-400">
-                                                                <span x-text="song.artist_name"></span> • 
-                                                                <span x-text="song.style"></span>
-                                                            </p>
-                                                        </div>
+                                                <div class="favorite-song-item-inner">
+                                                    <div class="flex-1">
+                                                        <p class="font-neon text-base text-neon-pink" x-text="song.title"></p>
+                                                        <p class="text-xs text-gray-400">
+                                                            <span x-text="song.artist_name"></span> • 
+                                                            <span x-text="song.style"></span>
+                                                        </p>
                                                     </div>
                                                     
-                                                    <div class="flex items-center gap-3">
-                                                        {{-- Duration --}}
-                                                        <div class="text-xs text-gray-500">
-                                                            <span x-text="Math.floor(song.length / 60) + ':' + String(song.length % 60).padStart(2, '0')"></span>
-                                                        </div>
-                                                        
-                                                        {{-- Button to remove from favorites --}}
-                                                        <button 
-                                                            @click="toggleFavorite(song.id)"
-                                                            class="favorite-btn active"
-                                                            title="Remove from favorites">
-                                                            <span>⭐</span>
-                                                        </button>
-                                                    </div>
+                                                    {{-- Button to remove from favorites --}}
+                                                    <button 
+                                                        @click.stop="removeFavorite(song.id)"
+                                                        class="favorite-btn active ml-3"
+                                                        title="Remove from favorites">
+                                                        <span>⭐</span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </template>
@@ -261,7 +242,7 @@
                                 {{-- MOTO 1 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-red">🏍️ MOTO 1</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-red">{{ $tokenCounts['moto_1'] ?? 0 }}</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-red" x-text="userTokens['moto_1'] || 0"></p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
@@ -270,7 +251,7 @@
                                 {{-- MOTO 3 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-yellow">🏍️ MOTO 3</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-yellow">{{ $tokenCounts['moto_3'] ?? 0 }}</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-yellow" x-text="userTokens['moto_3'] || 0"></p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
@@ -279,7 +260,7 @@
                                 {{-- MOTO 5 --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-green">🏍️ MOTO 5</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-green">{{ $tokenCounts['moto_5'] ?? 0 }}</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-green" x-text="userTokens['moto_5'] || 0"></p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
 
@@ -288,7 +269,7 @@
                                 {{-- CAR --}}
                                 <div class="ficha-item w-full sm:w-auto">
                                     <p class="ficha-label text-sm md:text-base text-neon-purple">🚗 CAR</p>
-                                    <p class="ficha-count text-xl md:text-2xl text-neon-purple">{{ $tokenCounts['car'] ?? 0 }}</p>
+                                    <p class="ficha-count text-xl md:text-2xl text-neon-purple" x-text="userTokens['car'] || 0"></p>
                                     <p class="ficha-text">tokens</p>
                                 </div>
                             </div>
@@ -361,33 +342,66 @@
     </div>
 
 <script>
-function jukeboxApp() {
-    return {
-        // States
-        selectedMode: 'moto',
-        selectedQuantity: 1,
+document.addEventListener('alpine:init', () => {
+    Alpine.data('jukeboxApp', () => ({
+        // Estados
+        selectedMode: null,
+        selectedQuantity: null,
         selectedSongs: [],
         selectedArtist: null,
+        _lastSelectedArtist: null,  // Variable persistente que NO se resetea
         isPlaying: false,
         isLocked: false,
+        _toggling: false,
+        _togglingFavorite: false,
+        _lastFavoriteClick: 0,
         
-        // Data from blade
+        // Datos desde Blade
         userTokens: @json($tokenCounts),
         availableSongs: @json($allSongs),
         availableArtists: @json($allArtists),
         songsByArtist: @json($songsByArtist),
         favoriteSongs: @json($favoriteSongs), 
-        favoriteIds: @json($favoriteIds), 
+        favoriteIds: @json($favoriteIds),
+
+        // Reproductor
+        playlist: [],
+        currentSongIndex: 0,
+        audioPlayer: null,
+        isLoading: false,
+        currentPlayingSong: null,
+        progress: 0,
+        currentTime: 0,
+        duration: 0,
         
-        // Initialization
         init() {
             console.log('🎵 Jukebox initialized');
             console.log('📊 Songs:', this.availableSongs.length);
             console.log('🎤 Artists:', this.availableArtists.length);
             console.log('🎫 Tokens:', this.userTokens);
+            
+            this.audioPlayer = new Audio();
+            
+            this.audioPlayer.addEventListener('loadedmetadata', () => {
+                this.duration = this.audioPlayer.duration;
+            });
+            
+            this.audioPlayer.addEventListener('timeupdate', () => {
+                this.currentTime = this.audioPlayer.currentTime;
+                this.progress = (this.currentTime / this.duration) * 100 || 0;
+            });
+            
+            this.audioPlayer.addEventListener('ended', () => {
+                console.log('🎵 Song ended, playing next...');
+                this.playNext();
+            });
+            
+            this.audioPlayer.addEventListener('error', (e) => {
+                console.error('❌ Audio error:', e);
+                alert('Error playing audio file');
+            });
         },
         
-        // Select quantity (traffic light)
         selectQuantity(quantity) {
             if (this.isLocked) return;
             
@@ -410,101 +424,392 @@ function jukeboxApp() {
             console.log('🚦 Quantity:', quantity);
         },
         
-        // Select mode (vehicle)
         selectMode(mode) {
             if (this.isLocked) return;
             
-            this.selectedMode = mode;
-            this.selectedSongs = [];
-            this.selectedArtist = null;
+            console.log('🚗/🏍️ Changing mode to:', mode);
             
-            document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
-            
-            if (mode === 'moto') {
-                document.getElementById('vehicleMoto').classList.add('active');
-                document.getElementById('modeText').textContent = '🏍️ MOTO (SONGS)';
-                console.log('🏍️ MOTO mode');
+            // Solo limpiar si estamos cambiando de modo
+            if (this.selectedMode !== mode) {
+                // Limpiar todo primero
+                this.selectedSongs = [];
+                this.selectedArtist = null;
+                this.selectedQuantity = null;
             } else {
-                document.getElementById('vehicleCar').classList.add('active');
-                document.getElementById('modeText').textContent = '🚗 CAR (COMPLETE ARTIST)';
-                console.log('🚗 CAR mode');
+                console.log('⚠️ Same mode selected, not resetting');
+                return; // Ya está en este modo, no hacer nada
             }
-        },
-        
-        // Select song (MOTO mode)
-        toggleSongSelection(songId) {
-            if (this.isLocked) return;
             
-            const index = this.selectedSongs.indexOf(songId);
+            // Forzar re-render: cambiar a null y luego al modo
+            this.selectedMode = null;
             
-            if (index > -1) {
-                this.selectedSongs.splice(index, 1);
-                console.log('❌ Deselected:', songId);
-            } else {
-                if (this.selectedSongs.length < this.selectedQuantity) {
-                    this.selectedSongs.push(songId);
-                    console.log('✅ Selected:', songId);
+            // Usar setTimeout para asegurar que Alpine procesa el cambio
+            setTimeout(() => {
+                this.selectedMode = mode;
+                
+                document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
+                
+                if (mode === 'moto') {
+                    document.getElementById('vehicleMoto').classList.add('active');
+                    document.getElementById('modeText').textContent = '🏍️ MOTO (SONGS)';
+                    console.log('🏍️ MOTO mode activated');
                 } else {
-                    alert(`You can only select ${this.selectedQuantity} songs`);
+                    document.getElementById('vehicleCar').classList.add('active');
+                    document.getElementById('modeText').textContent = '🚗 CAR (COMPLETE ARTIST)';
+                    console.log('🚗 CAR mode activated');
                 }
-            }
+            }, 10);
         },
         
-        // Check if song is selected
+        toggleSongSelection(songId) {
+            console.log('🔵 Toggle called for song:', songId);
+            
+            if (this.isLocked) {
+                console.log('🔴 Locked, cannot select');
+                return;
+            }
+            
+            // Debounce más agresivo
+            if (this._toggling) {
+                console.log('🔴 Already toggling, skip');
+                return;
+            }
+            
+            this._toggling = true;
+            
+            setTimeout(() => {
+                const index = this.selectedSongs.indexOf(songId);
+                
+                if (index > -1) {
+                    // Quitar canción
+                    this.selectedSongs = this.selectedSongs.filter(id => id !== songId);
+                    console.log('❌ Deselected:', songId);
+                } else {
+                    // Agregar canción
+                    if (this.selectedSongs.length < this.selectedQuantity) {
+                        this.selectedSongs = [...this.selectedSongs, songId];
+                        console.log('✅ Selected:', songId);
+                    } else {
+                        alert(`You can only select ${this.selectedQuantity} songs`);
+                    }
+                }
+                
+                console.log('📋 Selected songs:', this.selectedSongs);
+                
+                // Liberar después de 200ms
+                setTimeout(() => this._toggling = false, 200);
+            }, 50);
+        },
+        
         isSongSelected(songId) {
             return this.selectedSongs.includes(songId);
         },
         
-        // Select artist (CAR mode)
         selectArtist(artistId) {
             if (this.isLocked) return;
+            
+            console.log('🎤 Selecting artist:', artistId);
             this.selectedArtist = artistId;
-            console.log('🎤 Artist selected:', artistId);
+            this._lastSelectedArtist = artistId;  // Guardar en variable persistente
+            console.log('✅ Artist selected, selectedArtist is now:', this.selectedArtist);
+            console.log('✅ _lastSelectedArtist is now:', this._lastSelectedArtist);
         },
         
-        // PLAY button
-        togglePlay() {
-            console.log('▶️ PLAY');
+        async togglePlay() {
+            console.log('▶️ PLAY clicked');
             
-            const roadLine = document.getElementById('roadLine');
-            const motoLight = document.getElementById('motoLight');
-            const carLight = document.getElementById('carLight');
+            // Esperar a que Alpine procese todos los cambios reactivos
+            await this.$nextTick();
             
-            this.isPlaying = !this.isPlaying;
+            // CAPTURAR VALORES después de que Alpine actualice
+            const capturedMode = this.selectedMode;
+            const capturedQuantity = this.selectedQuantity;
+            const capturedSongs = [...this.selectedSongs];
+            // Usar _lastSelectedArtist si selectedArtist es null (fallback)
+            const capturedArtist = this.selectedArtist || this._lastSelectedArtist;
             
-            if (this.isPlaying) {
-                roadLine.classList.add('moving');
-                motoLight.classList.add('on');
-                carLight.classList.add('on');
-            } else {
-                roadLine.classList.remove('moving');
-                motoLight.classList.remove('on');
-                carLight.classList.remove('on');
+            console.log('📸 Captured values:');
+            console.log('Mode:', capturedMode);
+            console.log('Quantity:', capturedQuantity);
+            console.log('Selected songs:', capturedSongs);
+            console.log('Selected artist:', capturedArtist);
+            console.log('_lastSelectedArtist:', this._lastSelectedArtist);
+            console.log('Is locked:', this.isLocked);
+            
+            if (this.isLocked) {
+                if (this.isPlaying) {
+                    this.pausePlay();
+                } else {
+                    this.resumePlay();
+                }
+                return;
             }
-        },
-        
-        // PAUSE button
-        pausePlay() {
-            console.log('⏸️ PAUSE');
             
-            this.isPlaying = false;
+            // Validar que hay modo y cantidad seleccionados
+            if (!capturedMode) {
+                alert('Please select a mode first (MOTO or CAR)');
+                return;
+            }
             
-            const roadLine = document.getElementById('roadLine');
-            const motoLight = document.getElementById('motoLight');
-            const carLight = document.getElementById('carLight');
+            if (!capturedQuantity && capturedMode === 'moto') {
+                alert('Please select quantity from traffic light');
+                return;
+            }
             
-            roadLine.classList.remove('moving');
-            motoLight.classList.remove('on');
-            carLight.classList.remove('on');
+            // Validar selección
+            if (capturedMode === 'moto') {
+                console.log('Validating MOTO mode...');
+                if (capturedSongs.length !== capturedQuantity) {
+                    alert(`Please select exactly ${capturedQuantity} songs`);
+                    return;
+                }
+            } else {
+                console.log('Validating CAR mode...');
+                console.log('Captured artist:', capturedArtist);
+                // No validar aquí, el backend lo hace
+                // El alert causa problemas con la reactividad de Alpine
+            }
+            
+            // Consumir token y obtener playlist con valores capturados
+            await this.consumeTokenAndPlay(capturedMode, capturedQuantity, capturedSongs, capturedArtist);
         },
 
-        // Check if song is favorite
+        async consumeTokenAndPlay(mode, quantity, songs, artist) {
+            this.isLoading = true;
+            
+            try {
+                const payload = {
+                    mode: mode,
+                    quantity: quantity,
+                    song_ids: songs,
+                    artist_id: artist
+                };
+                
+                console.log('📦 Sending payload:', payload);
+                
+                const response = await fetch('/player/consume-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                console.log('📥 Server response:', data);
+                
+                if (!response.ok) {
+                    alert(data.error || 'Error consuming token');
+                    this.isLoading = false;
+                    return;
+                }
+                
+                this.playlist = data.songs;
+                this.currentSongIndex = 0;
+                this.isLocked = true;
+                
+                console.log('✅ Token consumed, playlist:', this.playlist);
+                
+                this.playCurrentSong();
+                
+                console.log('📊 Before discount - userTokens:', this.userTokens);
+                
+                if (mode === 'moto') {
+                    const tokenKey = `moto_${quantity}`;
+                    console.log('🏍️ MOTO mode - tokenKey:', tokenKey);
+                    console.log('Current count:', this.userTokens[tokenKey]);
+                    if (this.userTokens[tokenKey] > 0) {
+                        this.userTokens[tokenKey]--;
+                        console.log('✅ MOTO token decremented to:', this.userTokens[tokenKey]);
+                    }
+                } else {
+                    console.log('🚗 CAR mode');
+                    console.log('Current CAR count:', this.userTokens['car']);
+                    console.log('Type of CAR count:', typeof this.userTokens['car']);
+                    if (this.userTokens['car'] > 0) {
+                        this.userTokens['car']--;
+                        console.log('✅ CAR token decremented to:', this.userTokens['car']);
+                    } else {
+                        console.log('❌ CAR token NOT decremented - count is 0 or invalid');
+                    }
+                }
+                
+                console.log('📊 After discount - userTokens:', this.userTokens);
+                
+            } catch (error) {
+                console.error('Error consuming token:', error);
+                alert('Error starting playback');
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        playCurrentSong() {
+            if (this.playlist.length === 0) return;
+            
+            const song = this.playlist[this.currentSongIndex];
+            this.currentPlayingSong = song;
+            
+            console.log('▶️ Playing:', song.title, 'by', song.artist_name);
+            
+            this.audioPlayer.src = song.url_file;
+            this.audioPlayer.play();
+            this.isPlaying = true;
+            
+            this.updateNowPlaying(song);
+            this.startVisualAnimations();
+        },
+
+        updateNowPlaying(song) {
+            const title = document.querySelector('.now-playing-title');
+            const subtitle = document.querySelector('.now-playing-subtitle');
+            const hint = document.querySelector('.now-playing-hint');
+            
+            if (title) title.textContent = `♪ ${song.title} ♪`;
+            if (subtitle) subtitle.textContent = song.artist_name;
+            if (hint) hint.textContent = song.style;
+        },
+
+        startVisualAnimations() {
+            const roadLine = document.getElementById('roadLine');
+            const motoLight = document.getElementById('motoLight');
+            const carLight = document.getElementById('carLight');
+            
+            if (roadLine) roadLine.classList.add('moving');
+            if (motoLight) motoLight.classList.add('on');
+            if (carLight) carLight.classList.add('on');
+        },
+
+        stopVisualAnimations() {
+            const roadLine = document.getElementById('roadLine');
+            const motoLight = document.getElementById('motoLight');
+            const carLight = document.getElementById('carLight');
+            
+            if (roadLine) roadLine.classList.remove('moving');
+            if (motoLight) motoLight.classList.remove('on');
+            if (carLight) carLight.classList.remove('on');
+        },
+
+        resumePlay() {
+            if (this.audioPlayer) {
+                this.audioPlayer.play();
+                this.isPlaying = true;
+                this.startVisualAnimations();
+                console.log('▶️ Resumed');
+            }
+        },
+
+        pausePlay() {
+            if (this.audioPlayer) {
+                this.audioPlayer.pause();
+                this.isPlaying = false;
+                this.stopVisualAnimations();
+                console.log('⏸️ Paused');
+            }
+        },
+
+        playNext() {
+            if (this.currentSongIndex < this.playlist.length - 1) {
+                this.currentSongIndex++;
+                this.playCurrentSong();
+            } else {
+                console.log('✅ Playlist finished');
+                this.stopPlayback();
+            }
+        },
+
+        stopPlayback() {
+            if (this.audioPlayer) {
+                this.audioPlayer.pause();
+                this.audioPlayer.currentTime = 0;
+            }
+            
+            this.isPlaying = false;
+            this.isLocked = false;
+            this.playlist = [];
+            this.currentSongIndex = 0;
+            this.currentPlayingSong = null;
+            this.progress = 0;
+            
+            this.stopVisualAnimations();
+            
+            const title = document.querySelector('.now-playing-title');
+            const subtitle = document.querySelector('.now-playing-subtitle');
+            const hint = document.querySelector('.now-playing-hint');
+            
+            if (title) title.textContent = '♪ Playing... ♪';
+            if (subtitle) subtitle.textContent = 'Select your music';
+            if (hint) hint.textContent = 'Use the traffic light to select quantity';
+            
+            console.log('⏹️ Playback stopped');
+        },
+
         isFavorite(songId) {
             return this.favoriteIds.includes(songId);
         },
 
-        // Favorite (add or remove)
-        async toggleFavorite(songId) {
+        // Agregar a favoritos (solo desde catálogo)
+        addFavorite(songId) {
+            console.log('🎯 addFavorite called for:', songId);
+            
+            // Si ya está en favoritos, no hacer nada
+            if (this.favoriteIds.includes(songId)) {
+                console.log('❌ Already in favorites, ignoring');
+                return;
+            }
+            
+            console.log('✅ Adding to favorites...');
+            
+            // Actualizar UI INMEDIATAMENTE (síncrono)
+            this.favoriteIds = [...this.favoriteIds, songId];
+            
+            // Buscar y agregar la canción
+            const song = this.availableSongs.find(s => s.id === songId);
+            if (song) {
+                this.favoriteSongs = [song, ...this.favoriteSongs];
+                console.log('✅ UI updated, now calling server...');
+            }
+            
+            // Llamar al servidor en background (no esperar)
+            fetch('/favorites/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ music_song_id: songId })
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log('Server response:', data);
+                if (data.status !== 'added') {
+                    // Si el servidor dice que NO se agregó, revertir
+                    console.log('⚠️ Server rejected, reverting...');
+                    this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                    this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Server error, reverting:', error);
+                this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                alert('Error adding to favorites');
+            });
+        },
+        
+        // Eliminar de favoritos (solo desde favoritos)
+        async removeFavorite(songId) {
+            if (this._togglingFavorite) {
+                console.log('🔴 Already processing, skip');
+                return;
+            }
+            
+            this._togglingFavorite = true;
+            
+            console.log('=== REMOVE FAVORITE ===');
+            console.log('Song ID:', songId);
+            
             try {
                 const response = await fetch('/favorites/toggle', {
                     method: 'POST',
@@ -516,33 +821,31 @@ function jukeboxApp() {
                 });
                 
                 const data = await response.json();
+                console.log('Server response:', data);
                 
-                if (data.status === 'added') {
-                    this.favoriteIds.push(songId);
-                    console.log('⭐ Added to favorites:', songId);
+                if (data.status === 'removed') {
+                    // Quitar de favoriteIds
+                    this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                    console.log('💔 Removed from favoriteIds');
                     
-                    // Add to favorites list
-                    const song = this.availableSongs.find(s => s.id === songId);
-                    if (song) {
-                        this.favoriteSongs.unshift(song);
-                    }
-                } else {
-                    const index = this.favoriteIds.indexOf(songId);
-                    if (index > -1) {
-                        this.favoriteIds.splice(index, 1);
-                    }
-                    console.log('💔 Removed from favorites:', songId);
-                    
-                    // Remove from favorites list
+                    // Quitar de favoriteSongs
                     this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                    console.log('💔 Removed from favoriteSongs');
                 }
+                
+                console.log('=== REMOVE FAVORITE END ===');
+                
             } catch (error) {
-                console.error('Error toggling favorite:', error);
-                alert('Error updating favorites');
+                console.error('❌ Error removing favorite:', error);
+                alert('Error removing from favorites');
+            } finally {
+                setTimeout(() => {
+                    this._togglingFavorite = false;
+                }, 300);
             }
         }
-    }
-}
+    }));
+});
 </script>
 </x-app-layout>
 

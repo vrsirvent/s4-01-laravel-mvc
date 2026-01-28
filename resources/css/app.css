@@ -1997,3 +1997,153 @@ body > * {
     }
 
 }
+
+
+/* ========================================
+   PERFECTLY UNIFIED STYLES - SAME WIDTH
+   Songs, Artists & Favorites - EXACTLY THE SAME
+   ======================================== */
+
+/* Container - CERO estilos visuales, MISMO ancho */
+.song-item,
+.artist-item,
+.favorite-song-item {
+    cursor: pointer;
+    border: none !important;
+    outline: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100%;  /* Ancho completo */
+}
+
+/* Inner div - MISMO ancho y distribución */
+.song-item-inner,
+.artist-item-inner,
+.favorite-song-item-inner {
+    /* Layout - MISMO para todos */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    
+    /* Ancho COMPLETO */
+    width: 100%;
+    
+    /* Padding IGUAL */
+    padding: 0.75rem;
+    
+    /* Bordes suaves IGUALES */
+    border-radius: 0.5rem;
+    
+    /* SIN fondo por defecto */
+    background-color: transparent !important;
+    
+    /* SIN bordes ni sombras */
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* Transición suave */
+    transition: background-color 0.3s ease;
+    
+    /* Altura mínima IGUAL */
+    min-height: 4rem;
+    
+    /* Box sizing para calcular ancho correctamente */
+    box-sizing: border-box;
+}
+
+/* Hover state - MISMO */
+.song-item:hover .song-item-inner,
+.artist-item:hover .artist-item-inner,
+.favorite-song-item:hover .favorite-song-item-inner {
+    background-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* Selected state - MISMO */
+.song-item.selected .song-item-inner,
+.song-item-inner.bg-gray-700,
+.artist-item.selected .artist-item-inner,
+.artist-item-inner.bg-gray-700 {
+    background-color: rgba(55, 65, 81, 0.5) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* FORZAR que bg-gray-700 NO agregue estilos extra */
+.bg-gray-700 {
+    background-color: rgba(55, 65, 81, 0.5) !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Flex-1 - MISMO comportamiento */
+.song-item-inner .flex-1,
+.artist-item-inner .flex-1,
+.favorite-song-item-inner .flex-1 {
+    flex: 1 1 0%;
+    min-width: 0;  /* Permite que el texto se ajuste */
+}
+
+/* Favorite button - MISMO tamaño y posición */
+.song-item-inner .favorite-btn,
+.artist-item-inner .favorite-btn,
+.favorite-song-item-inner .favorite-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    padding: 0.25rem;
+    flex-shrink: 0;
+    margin-left: 0.75rem;  /* ml-3 = 0.75rem */
+    width: 2rem;  /* Ancho fijo */
+    height: 2rem; /* Alto fijo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+.favorite-btn.active {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+}
+
+/* Alpine.js cloak */
+[x-cloak] {
+    display: none !important;
+}
+
+
+/* Estilos para elementos deshabilitados */
+.traffic-light.disabled {
+    opacity: 0.3;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Solo el área de selección se deshabilita, NO el botón de favoritos */
+.song-selection-area.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* El song-item ya NO tiene disabled */
+.song-item.disabled {
+    /* Eliminado - ya no se usa */
+}
+
+.artist-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+.artist-item.disabled .artist-item-inner {
+    cursor: not-allowed !important;
+}
