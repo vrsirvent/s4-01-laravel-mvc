@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SongController;
+use App\Http\Controllers\ArtistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,13 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Songs - Using SongController
     Route::get('/song', [SongController::class, 'index'])->name('song');
-
-    // Artists - Placeholder
-    Route::get('/artist', function () {
-        return view('artist');
-    })->name('artist');
+    Route::get('/artist', [ArtistController::class, 'index'])->name('artist');
 
     // Categories - Placeholder
     Route::get('/category', function () {
