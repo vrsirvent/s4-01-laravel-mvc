@@ -2176,3 +2176,118 @@ body > * {
 .catalog > div {
     height: 24rem; /* h-96 = 384px = 24rem */
 }
+
+/* ========================================
+   CONTROL-BTN ACTIVE STATE - Botones de filtro
+   ======================================== */
+
+.control-btn.active {
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+    /*color: #000;*/
+    color: var(--neon-yellow) !important;
+    border: 2px solid var(--neon-yellow);
+    box-shadow: 0 0 15px var(--neon-yellow), 0 0 30px rgba(34, 211, 238, 0.5);
+    transform: translateY(-2px);
+}
+
+.control-btn.active:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px var(--neon-yellow), 0 0 40px rgba(34, 211, 238, 0.7);
+}
+
+/* ========================================
+   ARTIST CARDS - Tarjetas de artistas
+   ======================================== */
+
+.artist-card {
+    background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+    border: 2px solid var(--neon-purple);
+    border-radius: 12px;
+    padding: 20px;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* .artist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px var(--neon-purple), 0 8px 12px rgba(0, 0, 0, 0.4);
+    border-color: var(--neon-pink);
+} */
+
+.artist-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.artist-avatar {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 8px var(--neon-purple));
+}
+
+.artist-description {
+    min-height: 40px;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.artist-stats {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 12px;
+    border-top: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+.artist-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.artist-stat-icon {
+    font-size: 1.2rem;
+}
+
+.artist-stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--neon-purple);
+    text-shadow: 0 0 8px var(--neon-purple);
+}
+
+.artist-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.artist-card-empty {
+    background: linear-gradient(135deg, #1a1a2a, #0f0f1a);
+    border: 2px dashed var(--neon-purple);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .artist-card {
+        padding: 16px;
+    }
+    
+    .artist-avatar {
+        font-size: 2rem;
+    }
+    
+    .artist-stat-value {
+        font-size: 1.2rem;
+    }
+}
