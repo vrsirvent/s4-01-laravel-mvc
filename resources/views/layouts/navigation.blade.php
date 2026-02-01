@@ -23,7 +23,7 @@
                     <div class="nav-underline"></div>
                 @else
                     {{-- Users --}}
-                    <a href="{{ route('dashboard') }}" class="nav-link font-neon {{ request()->routeIs('dashboard') ? 'active' : '' }}">DASHBOARD</a>
+                    <a href="{{ route('dashboard') }}" class="nav-link font-neon {{ request()->routeIs('dashboard') ? 'active' : '' }}">JUKEBOX</a>
                     <a href="{{ route('song') }}" class="nav-link font-neon {{ request()->routeIs('song') ? 'active' : '' }}">SONGS</a>
                     <a href="{{ route('artist') }}" class="nav-link font-neon {{ request()->routeIs('artist') ? 'active' : '' }}">ARTISTS</a>
                     <a href="{{ route('musical-style') }}" class="nav-link font-neon {{ request()->routeIs('musical-style') ? 'active' : '' }}">MUSICAL STYLES</a>

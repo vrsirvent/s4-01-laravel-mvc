@@ -1,0 +1,463 @@
+{{-- Player display screen. Alpine's <script> controls these elements. --}}
+<div class="visual-screen mb-4 md:mb-6">
+    <div class="stars"></div>
+    <div class="city"></div>
+    <div class="road">
+        <div class="road-line" id="roadLine"></div>
+    </div>
+
+    <div class="traffic-box">
+        <div class="traffic-lights">
+            <div class="traffic-light red" 
+                :class="{ 'disabled': selectedMode !== 'moto' }"
+                @click="selectedMode === 'moto' ? selectQuantity(1) : null">1</div>
+            <div class="traffic-light yellow" 
+                :class="{ 'disabled': selectedMode !== 'moto' }"
+                @click="selectedMode === 'moto' ? selectQuantity(3) : null">3</div>
+            <div class="traffic-light green" 
+                :class="{ 'disabled': selectedMode !== 'moto' }"
+                @click="selectedMode === 'moto' ? selectQuantity(5) : null">5</div>
+        </div>
+        <div class="traffic-pole"></div>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" @click="togglePlay()">▶️ PLAY</button>
+        <button class="control-btn" @click="pausePlay()">⏸️ PAUSE</button>
+        <button class="control-btn" @click="playNext()" :disabled="!isPlaying">⏭️ NEXT</button>
+    </div>
+
+    <div class="now-playing">
+        <h3 class="text-base md:text-lg now-playing-title">♪ Playing... ♪</h3>
+        <p class="text-sm md:text-base now-playing-subtitle">Select your music</p>
+        <p class="text-xs now-playing-hint">Use the traffic light to select quantity</p>
+    </div>
+
+    <div class="vehicles">
+        <div class="vehicle moto" id="vehicleMoto" @click="selectMode('moto')">
+            <div class="moto-body"></div>
+            <div class="moto-wheel back"></div>
+            <div class="moto-wheel front"></div>
+            <div class="moto-light" id="motoLight"></div>
+        </div>
+
+        <div class="vehicle car" id="vehicleCar" @click="selectMode('car')">
+            <div class="car-roof"></div>
+            <div class="car-body"></div>
+            <div class="car-wheel back"></div>
+            <div class="car-wheel front"></div>
+            <div class="car-headlight" id="carLight"></div>
+            <div class="car-taillight"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('jukeboxApp', () => ({
+        // States
+        selectedMode: null,
+        selectedQuantity: null,
+        selectedSongs: [],
+        selectedArtist: null,
+        _lastSelectedArtist: null,  // Variable - DOES NOT reset
+        isPlaying: false,
+        isLocked: false,
+        _toggling: false,
+        _togglingFavorite: false,
+        _lastFavoriteClick: 0,
+        
+        // Data from Blade
+        userTokens: @json($tokenCounts),
+        availableSongs: @json($allSongs),
+        availableArtists: @json($allArtists),
+        favoriteSongs: @json($favoriteSongs), 
+        favoriteIds: @json($favoriteIds),
+
+        // Player
+        playlist: [],
+        currentSongIndex: 0,
+        audioPlayer: null,
+        isLoading: false,
+        currentPlayingSong: null,
+        progress: 0,
+        currentTime: 0,
+        duration: 0,
+        
+        init() {
+            this.audioPlayer = new Audio();
+            
+            this.audioPlayer.addEventListener('loadedmetadata', () => {
+                this.duration = this.audioPlayer.duration;
+            });
+            
+            this.audioPlayer.addEventListener('timeupdate', () => {
+                this.currentTime = this.audioPlayer.currentTime;
+                this.progress = (this.currentTime / this.duration) * 100 || 0;
+            });
+            
+            this.audioPlayer.addEventListener('ended', () => {
+                this.playNext();
+            });
+            
+            this.audioPlayer.addEventListener('error', () => {
+                alert('Error playing audio file');
+            });
+        },
+        
+        selectQuantity(quantity) {
+            if (this.isLocked) return;
+            
+            this.selectedQuantity = quantity;
+            this.selectedSongs = [];
+            
+            document.querySelectorAll('.traffic-light').forEach(light => light.classList.remove('active'));
+            
+            if (quantity === 1) {
+                document.querySelector('.traffic-light.red').classList.add('active');
+                document.getElementById('quantityText').textContent = '🔴 1 SONG';
+            } else if (quantity === 3) {
+                document.querySelector('.traffic-light.yellow').classList.add('active');
+                document.getElementById('quantityText').textContent = '🟡 3 SONGS';
+            } else if (quantity === 5) {
+                document.querySelector('.traffic-light.green').classList.add('active');
+                document.getElementById('quantityText').textContent = '🟢 5 SONGS';
+            }
+        },
+        
+        selectMode(mode) {
+            if (this.isLocked) return;
+            
+            // Only clean if we are changing modes.
+            if (this.selectedMode !== mode) {
+                // Clean everything first
+                this.selectedSongs = [];
+                this.selectedArtist = null;
+                this.selectedQuantity = null;
+            } else {
+                return; // You are already in this mode, do nothing.
+            }
+            
+            // Force render: change to null and then to mode
+            this.selectedMode = null;
+            
+            // Use setTimeout to ensure that Alpine processes the change
+            setTimeout(() => {
+                this.selectedMode = mode;
+                
+                document.querySelectorAll('.vehicle').forEach(v => v.classList.remove('active'));
+                
+                if (mode === 'moto') {
+                    document.getElementById('vehicleMoto').classList.add('active');
+                    document.getElementById('modeText').textContent = '🏍️ MOTO (SONGS)';
+                } else {
+                    document.getElementById('vehicleCar').classList.add('active');
+                    document.getElementById('modeText').textContent = '🚗 CAR (COMPLETE ARTIST)';
+                }
+            }, 10);
+        },
+        
+        toggleSongSelection(songId) {
+            if (this.isLocked) return;
+            
+            // More aggressive debounce
+            if (this._toggling) return;
+            
+            this._toggling = true;
+            
+            setTimeout(() => {
+                const index = this.selectedSongs.indexOf(songId);
+                
+                if (index > -1) {
+                    // Remove song
+                    this.selectedSongs = this.selectedSongs.filter(id => id !== songId);
+                } else {
+                    // Add song
+                    if (this.selectedSongs.length < this.selectedQuantity) {
+                        this.selectedSongs = [...this.selectedSongs, songId];
+                    } else {
+                        alert(`You can only select ${this.selectedQuantity} songs`);
+                    }
+                }
+                
+                // Release after 200 ms
+                setTimeout(() => this._toggling = false, 200);
+            }, 50);
+        },
+        
+        isSongSelected(songId) {
+            return this.selectedSongs.includes(songId);
+        },
+        
+        selectArtist(artistId) {
+            if (this.isLocked) return;
+            
+            this.selectedArtist = artistId;
+            this._lastSelectedArtist = artistId;  // Save to variable
+        },
+        
+        async togglePlay() {
+            // Wait for Alpine to process all reactive changes
+            await this.$nextTick();
+            
+            // CAPTURE VALUES after Alpine updates
+            const capturedMode = this.selectedMode;
+            const capturedQuantity = this.selectedQuantity;
+            const capturedSongs = [...this.selectedSongs];
+            // Use _lastSelectedArtist if selectedArtist is null (fallback)
+            const capturedArtist = this.selectedArtist || this._lastSelectedArtist;
+            
+            if (this.isLocked) {
+                if (this.isPlaying) {
+                    this.pausePlay();
+                } else {
+                    this.resumePlay();
+                }
+                return;
+            }
+            
+            // Validate that mode and quantity are selected
+            if (!capturedMode) {
+                alert('Please select a mode first (MOTO or CAR)');
+                return;
+            }
+            
+            if (!capturedQuantity && capturedMode === 'moto') {
+                alert('Please select quantity from traffic light');
+                return;
+            }
+            
+            // Validate selection
+            if (capturedMode === 'moto') {
+                if (capturedSongs.length !== capturedQuantity) {
+                    alert(`Please select exactly ${capturedQuantity} songs`);
+                    return;
+                }
+            }
+            
+            // Consume token and obtain playlist with captured values
+            await this.consumeTokenAndPlay(capturedMode, capturedQuantity, capturedSongs, capturedArtist);
+        },
+
+        async consumeTokenAndPlay(mode, quantity, songs, artist) {
+            this.isLoading = true;
+            
+            try {
+                const response = await fetch('/player/consume-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        mode: mode,
+                        quantity: quantity,
+                        song_ids: songs,
+                        artist_id: artist
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    alert(data.error || 'Error consuming token');
+                    this.isLoading = false;
+                    return;
+                }
+                
+                this.playlist = data.songs;
+                this.currentSongIndex = 0;
+                this.isLocked = true;
+                
+                this.playCurrentSong();
+                
+                if (mode === 'moto') {
+                    const tokenKey = `moto_${quantity}`;
+                    if (this.userTokens[tokenKey] > 0) {
+                        this.userTokens[tokenKey]--;
+                    }
+                } else {
+                    if (this.userTokens['car'] > 0) {
+                        this.userTokens['car']--;
+                    }
+                }
+                
+            } catch (error) {
+                alert('Error starting playback');
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        playCurrentSong() {
+            if (this.playlist.length === 0) return;
+            
+            const song = this.playlist[this.currentSongIndex];
+            this.currentPlayingSong = song;
+            
+            this.audioPlayer.src = song.url_file;
+            this.audioPlayer.play();
+            this.isPlaying = true;
+            
+            this.updateNowPlaying(song);
+            this.startVisualAnimations();
+        },
+
+        updateNowPlaying(song) {
+            const title = document.querySelector('.now-playing-title');
+            const subtitle = document.querySelector('.now-playing-subtitle');
+            const hint = document.querySelector('.now-playing-hint');
+            
+            if (title) title.textContent = `♪ ${song.title} ♪`;
+            if (subtitle) subtitle.textContent = song.artist_name;
+            if (hint) hint.textContent = song.style;
+        },
+
+        startVisualAnimations() {
+            const roadLine = document.getElementById('roadLine');
+            const motoLight = document.getElementById('motoLight');
+            const carLight = document.getElementById('carLight');
+            
+            if (roadLine) roadLine.classList.add('moving');
+            if (motoLight) motoLight.classList.add('on');
+            if (carLight) carLight.classList.add('on');
+        },
+
+        stopVisualAnimations() {
+            const roadLine = document.getElementById('roadLine');
+            const motoLight = document.getElementById('motoLight');
+            const carLight = document.getElementById('carLight');
+            
+            if (roadLine) roadLine.classList.remove('moving');
+            if (motoLight) motoLight.classList.remove('on');
+            if (carLight) carLight.classList.remove('on');
+        },
+
+        resumePlay() {
+            if (this.audioPlayer) {
+                this.audioPlayer.play();
+                this.isPlaying = true;
+                this.startVisualAnimations();
+            }
+        },
+
+        pausePlay() {
+            if (this.audioPlayer) {
+                this.audioPlayer.pause();
+                this.isPlaying = false;
+                this.stopVisualAnimations();
+            }
+        },
+
+        playNext() {
+            if (this.currentSongIndex < this.playlist.length - 1) {
+                this.currentSongIndex++;
+                this.playCurrentSong();
+            } else {
+                this.stopPlayback();
+            }
+        },
+
+        stopPlayback() {
+            if (this.audioPlayer) {
+                this.audioPlayer.pause();
+                this.audioPlayer.currentTime = 0;
+            }
+            
+            this.isPlaying = false;
+            this.isLocked = false;
+            this.playlist = [];
+            this.currentSongIndex = 0;
+            this.currentPlayingSong = null;
+            this.progress = 0;
+            
+            this.stopVisualAnimations();
+            
+            const title = document.querySelector('.now-playing-title');
+            const subtitle = document.querySelector('.now-playing-subtitle');
+            const hint = document.querySelector('.now-playing-hint');
+            
+            if (title) title.textContent = '♪ Playing... ♪';
+            if (subtitle) subtitle.textContent = 'Select your music';
+            if (hint) hint.textContent = 'Use the traffic light to select quantity';
+        },
+
+        isFavorite(songId) {
+            return this.favoriteIds.includes(songId);
+        },
+
+        // Add to favorites (only from catalog)
+        addFavorite(songId) {
+            // If it is already in your favorites, do nothing.
+            if (this.favoriteIds.includes(songId)) return;
+            
+            // Update UI IMMEDIATELY (synchronous)
+            this.favoriteIds = [...this.favoriteIds, songId];
+            
+            // Search for and add the song
+            const song = this.availableSongs.find(s => s.id === songId);
+            if (song) {
+                this.favoriteSongs = [song, ...this.favoriteSongs];
+            }
+            
+            // Call the server in the background (do not wait)
+            fetch('/favorites/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ music_song_id: songId })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'added') {
+                    // If the server says it was NOT added, revert
+                    this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                    this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                }
+            })
+            .catch(() => {
+                // Reverse in case of error
+                this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                alert('Error adding to favorites');
+            });
+        },
+        
+        // Remove from favorites (only from favorites)
+        async removeFavorite(songId) {
+            if (this._togglingFavorite) return;
+            
+            this._togglingFavorite = true;
+            
+            try {
+                const response = await fetch('/favorites/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ music_song_id: songId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'removed') {
+                    this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
+                    this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
+                }
+                
+            } catch (error) {
+                alert('Error removing from favorites');
+            } finally {
+                setTimeout(() => {
+                    this._togglingFavorite = false;
+                }, 300);
+            }
+        }
+    }));
+});
+</script>
+
+

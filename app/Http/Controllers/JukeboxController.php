@@ -6,27 +6,35 @@ use Illuminate\Http\Request;
 use App\Models\JukeboxToken;
 use App\Models\UserToken;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
+use Illuminate\View\View;
 
 class JukeboxController extends Controller
 {
     /**
-     * Dashboard view
+     * View of the main dashboard
+     *
+     * @param Request $request
+     * @return View
      */
-    public function index()
+    public function index(Request $request): View
     {
         $user = Auth::user();
-        
-        // Have tokens for buy (BD)
+
+        // Search term from the catalog form
+        $search = $request->input('search');
+
+        // Tokens available for purchase (from the database)
         $availableTokens = JukeboxToken::orderBy('song_quantity')->get();
-        
-        // Have tokens that the user has grouped by type
+
+        // Tokens held by the user, grouped by type
         $userTokensRaw = UserToken::where('user_id', $user->id)
             ->with('jukeboxToken')
             ->get();
-        
-        // Array counter token token type
+
+        // Active token counter by type
         $tokenCounts = [];
-        
+
         foreach ($availableTokens as $token) {
             $activeTokens = $userTokensRaw->filter(function($userToken) use ($token) {
                 if ($userToken->jukebox_token_id == $token->id) {
@@ -37,60 +45,18 @@ class JukeboxController extends Controller
                 }
                 return false;
             })->count();
-            
+
             $tokenCounts[$token->name] = $activeTokens;
         }
 
-        // User credit (read DB)
+        // User balance (DB)
         $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
 
-        // MOTO - have all songs
-        $allSongs = \App\Models\MusicSong::with(['artist', 'musicalStyle'])
-            ->orderBy('title')
-            ->get()
-            ->map(function($song) {
-                return [
-                    'id' => $song->id,
-                    'title' => $song->title,
-                    'artist_name' => $song->artist->name,
-                    'style' => $song->musicalStyle->name,
-                    'length' => $song->length,
-                    'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
-                ];
-            });
+        // Songs and artists filtered by search
+        $allSongs = $this->getFilteredSongs($search);
+        $allArtists = $this->getFilteredArtists($search);
 
-        // CAR - have all artists
-        $allArtists = \App\Models\Artist::has('musicSongs')
-            ->withCount('musicSongs')
-            ->orderBy('name')
-            ->get()
-            ->map(function($artist) {
-                return [
-                    'id' => $artist->id,
-                    'name' => $artist->name,
-                    'songs_count' => $artist->music_songs_count,
-                    'description' => $artist->description,
-                ];
-            });
-
-        //  CAR - have songs by artist (grouped)
-        $songsByArtist = \App\Models\MusicSong::with(['artist', 'musicalStyle'])
-            ->get()
-            ->groupBy('artist_id')
-            ->map(function($songs) {
-                return $songs->map(function($song) {
-                    return [
-                        'id' => $song->id,
-                        'title' => $song->title,
-                        'artist_name' => $song->artist->name,
-                        'style' => $song->musicalStyle->name,
-                        'length' => $song->length,
-                        'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
-                    ];
-                })->values();
-            });
-
-        // Have user's favorite songs
+        // User's favorite songs
         $favoriteSongs = $user->favoriteSongs()
             ->with(['artist', 'musicalStyle'])
             ->orderBy('favorite_songs.created_at', 'desc')
@@ -106,74 +72,132 @@ class JukeboxController extends Controller
                 ];
             });
 
-        // IDs favorites songs
+        // Favorite song IDs (to mark as active star in the catalog)
         $favoriteIds = $favoriteSongs->pluck('id')->toArray();
-
-        // Current song
-        $currentSong = null;
 
         return view('dashboard', compact(
             'availableTokens',
             'tokenCounts',
-            'currentSong',
             'userMoney',
             'allSongs',
             'allArtists',
-            'songsByArtist',
             'favoriteSongs',
-            'favoriteIds'
+            'favoriteIds',
+            'search'
         ));
     }
 
     /**
-     * Buy token process
+     * Get searched songs. By song or artist.
+     *
+     * @param string|null $search
+     * @return Collection
+     */
+    private function getFilteredSongs(?string $search): Collection
+    {
+        $query = \App\Models\MusicSong::with(['artist', 'musicalStyle'])
+            ->orderBy('title');
+
+        // If search exists, filter by song or artist
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhereHas('artist', fn($artistQuery) => $artistQuery->where('name', 'like', '%' . $search . '%'));
+            });
+        }
+
+        // Array with the data needed by the view
+        return $query->get()->map(function($song) {
+            return [
+                'id' => $song->id,
+                'title' => $song->title,
+                'artist_name' => $song->artist->name,
+                'style' => $song->musicalStyle->name,
+                'length' => $song->length,
+                'url_file' => $song->url_file ? asset('storage/' . $song->url_file) : null,
+            ];
+        });
+    }
+
+    /**
+     * Get searched artists. Only artists that have at least one song.
+     *
+     * @param string|null $search
+     * @return Collection
+     */
+    private function getFilteredArtists(?string $search): Collection
+    {
+        // Only artists with songs
+        $query = \App\Models\Artist::has('musicSongs')
+            ->withCount('musicSongs')
+            ->orderBy('name');
+
+        // If there is a search, filter by artist
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        // Array with the data needed by the view
+        return $query->get()->map(function($artist) {
+            return [
+                'id' => $artist->id,
+                'name' => $artist->name,
+                'songs_count' => $artist->music_songs_count,
+                'description' => $artist->description,
+            ];
+        });
+    }
+
+    /**
+     * Token purchase process
      */
     public function purchaseToken(Request $request)
     {
         $user = Auth::user();
-        
-        // Validate that the token ID was sent
+
+        // Validate ID token
         $request->validate([
             'jukebox_token_id' => 'required|exists:jukebox_tokens,id'
         ]);
-        
-        //  Receive token you want to buy
+
+        // Token you want to buy
         $token = JukeboxToken::findOrFail($request->jukebox_token_id);
-        
-        // Receive current user's balance
+
+        // Current balance
         $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
-        
-        // Validate that the user has sufficient funds
+
+        // Validate balance
         if ($userMoney < $token->price) {
             return redirect()->route('dashboard')
                 ->with('error', 'Insufficient balance. You need €' . number_format($token->price, 2) . ' but you only have €' . number_format($userMoney, 2));
         }
 
-        // Validate that there is stock available
+        // Validate stock
         if ($token->stock <= 0) {
             return redirect()->route('dashboard')
-                ->with('error', 'This token is out of stock.');
+                ->with('error', 'This token is sold out.');
         }
-        
-        // Complete the purchase (transaction)
+
+        // Complete the purchase
         \DB::transaction(function () use ($user, $token) {
-            // Subtract money from the user
+            // Discount money
             \DB::table('users')
                 ->where('id', $user->id)
                 ->decrement('money', $token->price);
-            
-            // 2. Subtract stock from the token
+
+            // Discount stock
             $token->decrement('stock');
-            
-            // 3. Create record in user_tokens
+
+            // Create record
             UserToken::create([
                 'user_id' => $user->id,
                 'jukebox_token_id' => $token->id,
                 'songs_used' => 0,
             ]);
         });
-        
+
         return redirect()->route('dashboard');
     }
-
 }
+
+
