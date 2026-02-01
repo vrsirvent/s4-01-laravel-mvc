@@ -26,7 +26,7 @@
                     <a href="{{ route('dashboard') }}" class="nav-link font-neon {{ request()->routeIs('dashboard') ? 'active' : '' }}">DASHBOARD</a>
                     <a href="{{ route('song') }}" class="nav-link font-neon {{ request()->routeIs('song') ? 'active' : '' }}">SONGS</a>
                     <a href="{{ route('artist') }}" class="nav-link font-neon {{ request()->routeIs('artist') ? 'active' : '' }}">ARTISTS</a>
-                    <a href="{{ route('category') }}" class="nav-link font-neon {{ request()->routeIs('category') ? 'active' : '' }}">CATEGORIES</a>
+                    <a href="{{ route('musical-style') }}" class="nav-link font-neon {{ request()->routeIs('musical-style') ? 'active' : '' }}">MUSICAL STYLES</a>
                 @endguest
             </div>
 
@@ -98,8 +98,8 @@
                 <x-responsive-nav-link :href="route('artist')" :active="request()->routeIs('artist')" class="font-mono">
                     {{ __('Artists') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('category')" :active="request()->routeIs('category')" class="font-mono">
-                    {{ __('Categories') }}
+                <x-responsive-nav-link :href="route('musical-style')" :active="request()->routeIs('musical-style')" class="font-mono">
+                    {{ __('Musical Styles') }}
                 </x-responsive-nav-link>
             @endguest
         </div>

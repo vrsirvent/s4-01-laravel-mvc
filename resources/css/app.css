@@ -12,6 +12,16 @@
     --neon-cyan: #64d2ff;
     --neon-purple: #bf5af2;
     --neon-pink: #ff6b9d;
+    --neon-orange: #ff9500;
+    --neon-blue: #0a84ff;
+    --neon-lime: #32d74b;
+    --neon-magenta: #ff375f;
+    --neon-violet: #5e5ce6;
+    --neon-teal: #5ac8fa;
+    --neon-indigo: #af52de;
+    --neon-mint: #00c7be;
+    --neon-blue-e: #00F0FF;
+    --neon-cyan-e: #0682d4;
     
     /* Common gradients */
     --gradient-dark: linear-gradient(180deg, #1a1a24 0%, #0f0f1a 100%);
@@ -231,8 +241,8 @@ body > * {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 3.5rem;
     letter-spacing: 0.3em;
-    color: var(--neon-purple);
-    text-shadow: 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple), 0 0 80px var(--neon-purple);
+    color: var(--neon-cyan-e);
+    text-shadow: 0 0 10px var(--neon-cyan-e), 0 0 20px var(--neon-cyan-e), 0 0 40px var(--neon-cyan-e), 0 0 80px var(--neon-cyan-e);
     animation: neon-flicker 2s infinite;
     margin-bottom: 5px;
 }
@@ -913,7 +923,7 @@ body > * {
 }
 
 .category-description {
-    color: #888;
+    color: #ffffff;
     font-size: 0.875rem;
     margin-top: 4px;
 }
@@ -2004,7 +2014,7 @@ body > * {
    Songs, Artists & Favorites - EXACTLY THE SAME
    ======================================== */
 
-/* Container - CERO estilos visuales, MISMO ancho */
+/* Container - ZERO visual styles, SAME width */
 .song-item,
 .artist-item,
 .favorite-song-item {
@@ -2015,53 +2025,53 @@ body > * {
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: 100%;  /* Ancho completo */
+    width: 100%;  /* Full width */
 }
 
-/* Inner div - MISMO ancho y distribución */
+/* Inner div - SAME width and layout */
 .song-item-inner,
 .artist-item-inner,
 .favorite-song-item-inner {
-    /* Layout - MISMO para todos */
+    /* Layout - SAME for all */
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
     
-    /* Ancho COMPLETO */
+    /* FULL width */
     width: 100%;
     
-    /* Padding IGUAL */
+    /* Padding EQUAL */
     padding: 0.75rem;
     
-    /* Bordes suaves IGUALES */
+    /* Smooth edges EQUAL */
     border-radius: 0.5rem;
     
-    /* SIN fondo por defecto */
+    /* No default background */
     background-color: transparent !important;
     
-    /* SIN bordes ni sombras */
+    /* NO borders or shadows */
     border: none !important;
     box-shadow: none !important;
     
-    /* Transición suave */
+    /* Smooth transition */
     transition: background-color 0.3s ease;
     
-    /* Altura mínima IGUAL */
+    /* Minimum height EQUAL */
     min-height: 4rem;
     
-    /* Box sizing para calcular ancho correctamente */
+    /* Box sizing to calculate width correctly */
     box-sizing: border-box;
 }
 
-/* Hover state - MISMO */
+/* Hover state - SAME */
 .song-item:hover .song-item-inner,
 .artist-item:hover .artist-item-inner,
 .favorite-song-item:hover .favorite-song-item-inner {
     background-color: rgba(55, 65, 81, 0.5) !important;
 }
 
-/* Selected state - MISMO */
+/* Selected state - SAME */
 .song-item.selected .song-item-inner,
 .song-item-inner.bg-gray-700,
 .artist-item.selected .artist-item-inner,
@@ -2071,7 +2081,7 @@ body > * {
     box-shadow: none !important;
 }
 
-/* FORZAR que bg-gray-700 NO agregue estilos extra */
+/* FORCE bg-gray-700 NOT to add extra styles */
 .bg-gray-700 {
     background-color: rgba(55, 65, 81, 0.5) !important;
     border: none !important;
@@ -2079,15 +2089,15 @@ body > * {
     outline: none !important;
 }
 
-/* Flex-1 - MISMO comportamiento */
+/* Flex-1 - SAME behavior */
 .song-item-inner .flex-1,
 .artist-item-inner .flex-1,
 .favorite-song-item-inner .flex-1 {
     flex: 1 1 0%;
-    min-width: 0;  /* Permite que el texto se ajuste */
+    min-width: 0;  /* Allow text to wrap */
 }
 
-/* Favorite button - MISMO tamaño y posición */
+/* Favorite button - SAME size and position */
 .song-item-inner .favorite-btn,
 .artist-item-inner .favorite-btn,
 .favorite-song-item-inner .favorite-btn {
@@ -2120,23 +2130,23 @@ body > * {
 }
 
 
-/* Estilos para elementos deshabilitados */
+/* Styles for disabled elements */
 .traffic-light.disabled {
     opacity: 0.3;
     cursor: not-allowed !important;
     pointer-events: none;
 }
 
-/* Solo el área de selección se deshabilita, NO el botón de favoritos */
+/* Only the selection area is disabled, NOT the favorites button. */
 .song-selection-area.disabled {
     opacity: 0.5;
     cursor: not-allowed !important;
     pointer-events: none;
 }
 
-/* El song-item ya NO tiene disabled */
+/* The song-item is NO longer disabled. */
 .song-item.disabled {
-    /* Eliminado - ya no se usa */
+    /* Deleted - no longer in use */
 }
 
 .artist-item.disabled {
@@ -2172,13 +2182,13 @@ body > * {
     background: rgba(34, 211, 238, 0.8);
 }
 
-/* Altura fija para el contenedor del catálogo */
+/* Fixed height for the catalog container */
 .catalog > div {
     height: 24rem; /* h-96 = 384px = 24rem */
 }
 
 /* ========================================
-   CONTROL-BTN ACTIVE STATE - Botones de filtro
+   CONTROL-BTN ACTIVE STATE - Filter buttons
    ======================================== */
 
 .control-btn.active {
@@ -2196,7 +2206,7 @@ body > * {
 }
 
 /* ========================================
-   ARTIST CARDS - Tarjetas de artistas
+   ARTIST CARDS - Artist cards
    ======================================== */
 
 .artist-card {
