@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MusicSong extends Model
 {
+
     // use HasFactory;
 
     protected $fillable = [
@@ -29,21 +30,24 @@ class MusicSong extends Model
 
     // Relationships
     
-    // Song belongs to an artist (Many to One)
-    public function artist()
-    {
+    /**
+     * Song belongs to an artist (Many to One)
+     */
+    public function artist() {
         return $this->belongsTo(Artist::class);
     }
 
-    // Song belongs to a musical style (Many to One)   
-    public function musicalStyle()
-    {
+    /**
+     * Song belongs to a musical style (Many to One)
+     */
+    public function musicalStyle() {
         return $this->belongsTo(MusicalStyle::class);
     }
 
-    // Song can be favorited by many users (Many to Many)
-    public function favoritedByUsers()
-    {
+    /**
+     * Song can be favorited by many users (Many to Many)
+     */
+    public function favoritedByUsers() {
         return $this->belongsToMany(
             User::class,
             'favorite_songs',
@@ -52,14 +56,13 @@ class MusicSong extends Model
         )->withTimestamps();
     }
 
-    /* Helper methods */
+    // Helper methods 
 
     /**
      * Increment play count
      * @return bool
      */
-    public function incrementPlayCount()
-    {
+    public function incrementPlayCount() {
         $this->play_count++;
         return $this->save();
     }
@@ -68,8 +71,7 @@ class MusicSong extends Model
      * Get formatted duration (MM:SS)
      * @return string
      */
-    public function getFormattedDuration()
-    {
+    public function getFormattedDuration() {
         $minutes = floor($this->length / 60);
         $seconds = $this->length % 60;
         return sprintf('%d:%02d', $minutes, $seconds);
@@ -80,28 +82,32 @@ class MusicSong extends Model
      * @param int $userId
      * @return bool
      */
-    public function isFavoritedBy($userId)
-    {
+    public function isFavoritedBy($userId) {
         return $this->favoritedByUsers()->where('user_id', $userId)->exists();
     }
 
-    /* Query scopes (Reusable queries) */
+    // Query scopes (Reusable) 
 
-    /* Scope: Filter by artist (all songs by a specific artist) */
-    public function scopeByArtist($query, $artistId)
-    {
+    /**
+     * Scope: Filter by artist
+     */
+    public function scopeByArtist($query, $artistId) {
         return $query->where('artist_id', $artistId);
     }
 
-    /* Scope: Filter by musical style (all songs of a specific style) */
-    public function scopeByStyle($query, $styleId)
-    {
+    /**
+     * Scope: Filter by musical style
+     */
+    public function scopeByStyle($query, $styleId) {
         return $query->where('musical_style_id', $styleId);
     }
 
-    /* Scope: Most played songs (10 songs with highest play_count) */
-    public function scopeMostPlayed($query)
-    {
+    /**
+     * Scope: Most played songs
+     */
+    public function scopeMostPlayed($query) {
         return $query->orderBy('play_count', 'desc');
     }
 }
+
+
