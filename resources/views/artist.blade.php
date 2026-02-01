@@ -3,6 +3,7 @@
         <div class="container mx-auto px-2 md:px-4">
             <div class="jukebox max-w-7xl mx-auto">
                 
+                <!-- Jukebox Top -->
                 <div class="jukebox-top">
                     <div class="top-arch"></div>
                     <div class="top-lights">
@@ -26,14 +27,20 @@
                         <p class="text-xs text-gray-400 mt-1">in catalog</p>
                     </div>
                 </div>
-
+                
+                <!-- Main -->
                 <div class="flex">
+                    <!-- Left Speaker -->
                     <div class="side-panel hidden lg:flex">
                         <div class="speaker"></div>
                         <div class="neon-bar"></div>
                     </div>
 
+                    <!-- Center -->
                     <div class="flex-1 p-3 md:p-6">
+                        <h3 class="section-title section-title-purple text-lg md:text-xl mb-4 md:mb-6">
+                            ⭐ OUR ARTISTS ⭐
+                        </h3>
                         
                         {{-- Music style filter --}}
                         <div class="mb-4 md:mb-6 filter-container">
@@ -64,13 +71,11 @@
 
                         {{-- Artists catalog --}}
                         <div class="catalog">
-                            <h3 class="section-title section-title-purple text-lg md:text-xl mb-4 md:mb-6">⭐ OUR ARTISTS ⭐</h3>
-                            
-                            <div class="h-96 overflow-y-auto">
+                            <div class="h-96 overflow-scroll">
                                 @if($allArtists->count() > 0)
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                                         @foreach($allArtists as $artist)
-                                            <div class="artist-card">
+                                            <div class="artist-card pointer-events-none">
                                                 <div class="artist-card-header">
                                                     <div class="artist-avatar">🎤</div>
                                                     <div class="flex-1">
