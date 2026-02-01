@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\ArtistController;
+use App\Http\Controllers\MusicalStyleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,11 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/song', [SongController::class, 'index'])->name('song');
     Route::get('/artist', [ArtistController::class, 'index'])->name('artist');
-
-    // Categories - Placeholder
-    Route::get('/category', function () {
-        return view('category');
-    })->name('category');
+    Route::get('/musical-style', [MusicalStyleController::class, 'index'])->name('musical-style');
 
 });
 

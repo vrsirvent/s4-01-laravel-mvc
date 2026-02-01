@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MusicalStyle extends Model
 {
-    // use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'description',
@@ -19,17 +17,34 @@ class MusicalStyle extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relationships 
+    // Relationships
 
-    // Musical style has many songs (One to Many) 
+    // Musical style has many songs (One to Many)
     public function musicSongs()
     {
         return $this->hasMany(MusicSong::class);
     }
 
-    /* Helper Methods - Get total songs count for this style */
+    /**
+     * Helper methods - Get total play count for all style's songs
+     * @return int
+     */
+    public function getTotalPlayCount()
+    {
+        return $this->musicSongs()->sum('play_count');
+    }
 
     /**
+     * Get most played song of this style
+     * @return \App\Models\MusicSong|null
+     */
+    public function getMostPlayedSong()
+    {
+        return $this->musicSongs()->orderBy('play_count', 'desc')->first();
+    }
+
+    /**
+     * Get songs count
      * @return int
      */
     public function getSongsCount()
@@ -38,17 +53,15 @@ class MusicalStyle extends Model
     }
 
     /**
-     * Get most popular songs of this style
-     * @param int $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * Get unique artists that have songs in this style
+     * @return int
      */
-    public function getTopSongs($limit = 10)
+    public function getArtistsCount()
     {
         return $this->musicSongs()
-                    ->orderBy('play_count', 'desc')
-                    ->limit($limit)
-                    ->get();
+            ->distinct()
+            ->count('artist_id');
     }
-
 }
+
 
