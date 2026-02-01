@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/song', [SongController::class, 'index'])->name('song');
+    Route::get('/songs', [SongController::class, 'index'])->name('song');
     Route::get('/artist', [ArtistController::class, 'index'])->name('artist');
     Route::get('/musical-style', [MusicalStyleController::class, 'index'])->name('musical-style');
 
