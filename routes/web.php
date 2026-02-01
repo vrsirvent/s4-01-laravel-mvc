@@ -10,6 +10,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/* Route::get('/test-404', function () {
+    abort(404);
+}); */
+
 Route::get('/dashboard', [App\Http\Controllers\JukeboxController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
