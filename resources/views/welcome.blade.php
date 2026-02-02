@@ -75,8 +75,7 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Spacer to maintain dimensions -->
+                    <!-- Spacer -->
                     <div style="height: 0; min-height: 0;"></div>
                 </div>
 
@@ -86,9 +85,13 @@
                 </div>
             </div>
 
-            <div class="footer-gradient"></div>
+            <div class="footer-gradient text-center">
+                <p class="text-xs md:text-sm text-gray-400">Browse the catalog, find and play your favorite songs</p>
+                <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">2026 IT ACADEMY - SPRINT 4</p>
+            </div>
         </div>
     </div>
-
 </body>
 </html>
+
+
