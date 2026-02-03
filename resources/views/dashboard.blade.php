@@ -1,33 +1,16 @@
 <x-app-layout>
 <div class="py-4 md:py-8">
     <div class="container mx-auto px-2 md:px-4">
-
-        {{-- Success/error messages --}}
-        @if(session('success'))
-            <div class="mb-4 p-4 bg-green-900 border border-green-500 text-green-100 rounded-lg">
-                <p class="font-neon text-center">✅ {{ session('success') }}</p>
-            </div>
-        @endif
         
-        @if(session('error'))
-            <div class="mb-4 p-4 bg-red-900 border border-red-500 text-red-100 rounded-lg">
-                <p class="font-neon text-center">❌ {{ session('error') }}</p>
-            </div>
-        @endif
+        {{-- Success/error messages --}}
+        <x-success-error-message />        
         
         <div class="jukebox max-w-7xl mx-auto" x-data="jukeboxApp()" x-init="init()">
                 
                 <div class="jukebox-top">
                     <div class="top-arch"></div>
                     <div class="top-lights">
-                        <div class="category-carousel">
-                            <span class="category category-1">JAZZ</span>
-                            <span class="category category-2">ROCK</span>
-                            <span class="category category-3">BLUES</span>
-                            <span class="category category-4">SOUL</span>
-                            <span class="category category-5">SWING</span>
-                            <span class="category category-6">POP</span>
-                        </div>
+                        <x-category-carousel />
                     </div>
 
                     <div class="jukebox-title">

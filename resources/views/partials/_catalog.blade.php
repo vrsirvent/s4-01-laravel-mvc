@@ -12,8 +12,8 @@
                         <div class="song-item-inner"
                             :class="{ 'bg-gray-700': isSongSelected(song.id) }">
                             <div class="flex-1 song-selection-area"
-                                :class="{ 'disabled': !selectedQuantity }"
-                                @click="selectedQuantity ? toggleSongSelection(song.id) : null">
+                                :class="{ 'opacity-50 cursor-not-allowed': !selectedQuantity }"
+                                @click="selectedQuantity && !isLocked ? toggleSongSelection(song.id) : (selectedQuantity ? null : alert('Please select quantity from traffic light first'))">
                                 <p class="font-neon text-base text-neon-cyan" x-text="song.title"></p>
                                 <p class="text-xs text-gray-400">
                                     <span x-text="song.artist_name"></span> • 
@@ -43,8 +43,8 @@
             <div class="space-y-2">
                 <template x-for="artist in availableArtists" :key="artist.id">
                     <div class="artist-item"
-                        :class="{ 'selected': selectedArtist === artist.id }"
-                        @click.stop="selectArtist(artist.id)">
+                        :class="{ 'selected': selectedArtist === artist.id, 'opacity-50 cursor-not-allowed': isLocked }"
+                        @click.stop="!isLocked ? selectArtist(artist.id) : null">
                         <div class="artist-item-inner"
                             :class="{ 'bg-gray-700': selectedArtist === artist.id }">
                             <div class="flex-1">

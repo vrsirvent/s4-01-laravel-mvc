@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            RECUPERAR CONTRASEÑA
+            RECOVER PASSWORD
         </h2>
-        <p class="auth-form-subtitle">Restablece el acceso a tu cuenta</p>
+        <p class="auth-form-subtitle">Restore access to your account</p>
     </div>
 
     <div class="mb-4 auth-info-text">

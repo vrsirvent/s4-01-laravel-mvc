@@ -21,7 +21,7 @@
                 <a href="/">
                     <div class="text-center">
                         <h1 class="auth-logo-title">
-                            JUKEBOX
+                            CITY JUKEBOX
                         </h1>
                         <p class="auth-logo-subtitle">
                             Retro Music Collection
@@ -36,7 +36,7 @@
 
             <div class="mt-6 text-center">
                 <p class="auth-footer-text">
-                    © 2024 Jukebox App | All rights reserved
+                    © 2026 City Jukebox App | All rights reserved
                 </p>
             </div>
         </div>

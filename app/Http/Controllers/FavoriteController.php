@@ -19,22 +19,20 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
 
-        // Check if it already exists
         $exists = FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->exists();
 
         if ($exists) {
-            return redirect()->back()->with('error', 'Esta canción ya está en tus favoritos');
+            return redirect()->back()->with('error', 'This song is already in your favorites.');
         }
 
-        // Add
         FavoriteSong::create([
             'user_id' => $user->id,
             'music_song_id' => $request->music_song_id,
         ]);
 
-        return redirect()->back()->with('success', '¡Canción agregada a favoritos!');
+        return redirect()->back()->with('success', 'Song added to favorites!');
     }
 
     /**
@@ -48,12 +46,11 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
 
-        // Remove
         FavoriteSng::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->delete();
 
-        return redirect()->back()->with('success', 'Canción eliminada de favoritos');
+        return redirect()->back()->with('success', 'Song removed from favorites');
     }
 
     /**
@@ -69,21 +66,18 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
 
-        // Search to see if it already exists
         $favorite = FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->first();
 
         if ($favorite) {
-            // Already exists → delete
             $favorite->delete();
             return response()->json([
                 'status' => 'removed',
-                'message' => 'Canción eliminada de favoritos'
+                'message' => 'Song removed from favorites'
             ]);
         }
 
-        // Does not exist → add
         FavoriteSong::create([
             'user_id' => $user->id,
             'music_song_id' => $request->music_song_id,
@@ -91,7 +85,7 @@ class FavoriteController extends Controller
 
         return response()->json([
             'status' => 'added',
-            'message' => '¡Canción agregada a favoritos!'
+            'message' => 'Song added to favorites!'
         ]);
     }
 }

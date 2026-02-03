@@ -17,14 +17,7 @@
             <div class="jukebox-top">
                 <div class="top-arch"></div>
                 <div class="top-lights">
-                    <div class="category-carousel">
-                        <span class="category category-1">JAZZ</span>
-                        <span class="category category-2">ROCK</span>
-                        <span class="category category-3">BLUES</span>
-                        <span class="category category-4">SOUL</span>
-                        <span class="category category-5">SWING</span>
-                        <span class="category category-6">POP</span>
-                    </div>
+                    <x-category-carousel />
                 </div>
                 
                 <div class="jukebox-title">
@@ -49,15 +42,15 @@
                             <div class="road-line" id="roadLine"></div>
                         </div>
 
-                        <div class="traffic-box">
+                        <div class="traffic-box" style="pointer-events: none">
                             <div class="traffic-lights">
-                                <div class="traffic-light red active"></div>
+                                <div class="traffic-light red"></div>
                                 <div class="traffic-light yellow"></div>
                                 <div class="traffic-light green"></div>
                             </div>                            
                         </div>
 
-                        <div class="vehicles">
+                        <div class="vehicles" style="pointer-events: none">
                             <div class="vehicle moto" id="vehicleMoto">
                                 <div class="moto-body"></div>
                                 <div class="moto-wheel back"></div>
@@ -86,8 +79,9 @@
             </div>
 
             <div class="footer-gradient text-center">
+                <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">IT ACADEMY - SPRINT 4</p>
                 <p class="text-xs md:text-sm text-gray-400">Browse the catalog, find and play your favorite songs</p>
-                <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">2026 IT ACADEMY - SPRINT 4</p>
+                <p class="auth-footer-text">© 2026 City Jukebox App | All rights reserved</p>
             </div>
         </div>
     </div>

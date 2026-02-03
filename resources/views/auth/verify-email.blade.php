@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            VERIFICAR EMAIL
+            VERIFY EMAIL
         </h2>
-        <p class="auth-form-subtitle">Confirma tu dirección de correo</p>
+        <p class="auth-form-subtitle">Confirm your email address</p>
     </div>
 
     <div class="mb-4 auth-info-text">

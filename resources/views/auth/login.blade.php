@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            INICIAR SESIÓN
+            LOG IN
         </h2>
-        <p class="auth-form-subtitle">Accede a tu colección musical</p>
+        <p class="auth-form-subtitle">Access your music collection</p>
     </div>
 
     <!-- Session Status -->
