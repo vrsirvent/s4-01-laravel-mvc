@@ -60,10 +60,9 @@ document.addEventListener('alpine:init', () => {
         selectedQuantity: null,
         selectedSongs: [],
         selectedArtist: null,
-        _lastSelectedArtist: null,  // Variable - DOES NOT reset
+        _lastSelectedArtist: null,
         isPlaying: false,
         isLocked: false,
-        _toggling: false,
         _togglingFavorite: false,
         _lastFavoriteClick: 0,
         
@@ -73,6 +72,7 @@ document.addEventListener('alpine:init', () => {
         availableArtists: @json($allArtists),
         favoriteSongs: @json($favoriteSongs), 
         favoriteIds: @json($favoriteIds),
+
 
         // Player
         playlist: [],
@@ -103,6 +103,24 @@ document.addEventListener('alpine:init', () => {
             this.audioPlayer.addEventListener('error', () => {
                 alert('Error playing audio file');
             });
+            
+            this.$watch('selectedSongs', (value) => {
+                if (this.selectedQuantity && this.selectedMode === 'moto') {
+                    const text = document.getElementById('quantityText');
+                    if (!text) return;
+                    
+                    const count = value.length;
+                    const total = this.selectedQuantity;
+                    
+                    if (this.selectedQuantity === 1) {
+                        text.textContent = `🔴 1 SONG (${count}/${total})`;
+                    } else if (this.selectedQuantity === 3) {
+                        text.textContent = `🟡 3 SONGS (${count}/${total})`;
+                    } else if (this.selectedQuantity === 5) {
+                        text.textContent = `🟢 5 SONGS (${count}/${total})`;
+                    }
+                }
+            });
         },
         
         selectQuantity(quantity) {
@@ -115,33 +133,29 @@ document.addEventListener('alpine:init', () => {
             
             if (quantity === 1) {
                 document.querySelector('.traffic-light.red').classList.add('active');
-                document.getElementById('quantityText').textContent = '🔴 1 SONG';
+                document.getElementById('quantityText').textContent = '🔴 1 SONG (0/1)';
             } else if (quantity === 3) {
                 document.querySelector('.traffic-light.yellow').classList.add('active');
-                document.getElementById('quantityText').textContent = '🟡 3 SONGS';
+                document.getElementById('quantityText').textContent = '🟡 3 SONGS (0/3)';
             } else if (quantity === 5) {
                 document.querySelector('.traffic-light.green').classList.add('active');
-                document.getElementById('quantityText').textContent = '🟢 5 SONGS';
+                document.getElementById('quantityText').textContent = '🟢 5 SONGS (0/5)';
             }
         },
         
         selectMode(mode) {
             if (this.isLocked) return;
             
-            // Only clean if we are changing modes.
             if (this.selectedMode !== mode) {
-                // Clean everything first
                 this.selectedSongs = [];
                 this.selectedArtist = null;
                 this.selectedQuantity = null;
             } else {
-                return; // You are already in this mode, do nothing.
+                return;
             }
             
-            // Force render: change to null and then to mode
             this.selectedMode = null;
             
-            // Use setTimeout to ensure that Alpine processes the change
             setTimeout(() => {
                 this.selectedMode = mode;
                 
@@ -160,29 +174,20 @@ document.addEventListener('alpine:init', () => {
         toggleSongSelection(songId) {
             if (this.isLocked) return;
             
-            // More aggressive debounce
-            if (this._toggling) return;
+            const index = this.selectedSongs.indexOf(songId);
             
-            this._toggling = true;
-            
-            setTimeout(() => {
-                const index = this.selectedSongs.indexOf(songId);
-                
-                if (index > -1) {
-                    // Remove song
-                    this.selectedSongs = this.selectedSongs.filter(id => id !== songId);
+            if (index > -1) {
+                this.selectedSongs = this.selectedSongs.filter(id => id !== songId);
+            } else {
+                if (this.selectedSongs.length < this.selectedQuantity) {
+                    this.selectedSongs = [...this.selectedSongs, songId];
                 } else {
-                    // Add song
-                    if (this.selectedSongs.length < this.selectedQuantity) {
-                        this.selectedSongs = [...this.selectedSongs, songId];
-                    } else {
-                        alert(`You can only select ${this.selectedQuantity} songs`);
-                    }
+                    alert(`You can only select ${this.selectedQuantity} songs`);
                 }
-                
-                // Release after 200 ms
-                setTimeout(() => this._toggling = false, 200);
-            }, 50);
+            }
+            
+            this.$nextTick(() => {
+            });
         },
         
         isSongSelected(songId) {
@@ -193,20 +198,10 @@ document.addEventListener('alpine:init', () => {
             if (this.isLocked) return;
             
             this.selectedArtist = artistId;
-            this._lastSelectedArtist = artistId;  // Save to variable
+            this._lastSelectedArtist = artistId;
         },
         
         async togglePlay() {
-            // Wait for Alpine to process all reactive changes
-            await this.$nextTick();
-            
-            // CAPTURE VALUES after Alpine updates
-            const capturedMode = this.selectedMode;
-            const capturedQuantity = this.selectedQuantity;
-            const capturedSongs = [...this.selectedSongs];
-            // Use _lastSelectedArtist if selectedArtist is null (fallback)
-            const capturedArtist = this.selectedArtist || this._lastSelectedArtist;
-            
             if (this.isLocked) {
                 if (this.isPlaying) {
                     this.pausePlay();
@@ -216,26 +211,36 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             
-            // Validate that mode and quantity are selected
+            await this.$nextTick();
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            const capturedMode = this.selectedMode;
+            const capturedQuantity = this.selectedQuantity;
+            const capturedSongs = [...this.selectedSongs];
+            const capturedArtist = this.selectedArtist || this._lastSelectedArtist;
+            
             if (!capturedMode) {
                 alert('Please select a mode first (MOTO or CAR)');
                 return;
             }
             
-            if (!capturedQuantity && capturedMode === 'moto') {
+            if (capturedMode === 'moto' && !capturedQuantity) {
                 alert('Please select quantity from traffic light');
                 return;
             }
             
-            // Validate selection
             if (capturedMode === 'moto') {
                 if (capturedSongs.length !== capturedQuantity) {
                     alert(`Please select exactly ${capturedQuantity} songs`);
                     return;
                 }
+            } else if (capturedMode === 'car') {
+                if (!capturedArtist) {
+                    alert('The artist is required');
+                    return;
+                }
             }
             
-            // Consume token and obtain playlist with captured values
             await this.consumeTokenAndPlay(capturedMode, capturedQuantity, capturedSongs, capturedArtist);
         },
 
@@ -388,19 +393,15 @@ document.addEventListener('alpine:init', () => {
 
         // Add to favorites (only from catalog)
         addFavorite(songId) {
-            // If it is already in your favorites, do nothing.
             if (this.favoriteIds.includes(songId)) return;
             
-            // Update UI IMMEDIATELY (synchronous)
             this.favoriteIds = [...this.favoriteIds, songId];
             
-            // Search for and add the song
             const song = this.availableSongs.find(s => s.id === songId);
             if (song) {
                 this.favoriteSongs = [song, ...this.favoriteSongs];
             }
             
-            // Call the server in the background (do not wait)
             fetch('/favorites/toggle', {
                 method: 'POST',
                 headers: {
@@ -412,13 +413,11 @@ document.addEventListener('alpine:init', () => {
             .then(r => r.json())
             .then(data => {
                 if (data.status !== 'added') {
-                    // If the server says it was NOT added, revert
                     this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
                     this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
                 }
             })
             .catch(() => {
-                // Reverse in case of error
                 this.favoriteIds = this.favoriteIds.filter(id => id !== songId);
                 this.favoriteSongs = this.favoriteSongs.filter(s => s.id !== songId);
                 alert('Error adding to favorites');

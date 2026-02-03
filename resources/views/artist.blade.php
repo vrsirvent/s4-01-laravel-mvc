@@ -7,14 +7,7 @@
                 <div class="jukebox-top">
                     <div class="top-arch"></div>
                     <div class="top-lights">
-                        <div class="category-carousel">
-                            <span class="category category-1">JAZZ</span>
-                            <span class="category category-2">ROCK</span>
-                            <span class="category category-3">BLUES</span>
-                            <span class="category category-4">SOUL</span>
-                            <span class="category category-5">SWING</span>
-                            <span class="category category-6">POP</span>
-                        </div>
+                        <x-category-carousel />
                     </div>
                     <div class="jukebox-title">
                         <h1>ARTISTS CATALOG</h1>
@@ -121,7 +114,7 @@
                         <div class="mt-4 md:mt-6 mb-4 md:mb-6 search-container-purple">
                             <form method="GET" action="{{ route('artist') }}">
                                 <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                                                                        @if(request('search') || request('style'))
+                                    @if(request('search') || request('style'))
                                         <a href="{{ route('artist') }}" class="control-btn w-full sm:w-auto btn-padding-lg bg-gray-600">
                                             ❌ CLEAR
                                         </a>

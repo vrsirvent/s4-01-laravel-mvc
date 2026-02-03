@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            CONFIRMAR CONTRASEÑA
+            CONFIRM PASSWORD
         </h2>
-        <p class="auth-form-subtitle">Área segura de la aplicación</p>
+        <p class="auth-form-subtitle">Secure area of the application</p>
     </div>
 
     <div class="mb-4 auth-info-text">

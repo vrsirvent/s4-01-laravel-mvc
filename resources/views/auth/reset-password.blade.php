@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            NUEVA CONTRASEÑA
+            NEW PASSWORD
         </h2>
-        <p class="auth-form-subtitle">Configura tu nueva contraseña</p>
+        <p class="auth-form-subtitle">Set your new password</p>
     </div>
 
     <form method="POST" action="{{ route('password.store') }}">

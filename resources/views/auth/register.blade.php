@@ -1,9 +1,9 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="auth-form-title">
-            REGISTRO
+            REGISTRATION
         </h2>
-        <p class="auth-form-subtitle">Únete a nuestra colección musical</p>
+        <p class="auth-form-subtitle">Join our music collection</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}">
