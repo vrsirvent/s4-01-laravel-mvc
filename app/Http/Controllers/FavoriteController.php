@@ -10,6 +10,9 @@ class FavoriteController extends Controller
 {
     /**
      * Add song to favorites
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function add(Request $request)
     {
@@ -37,6 +40,9 @@ class FavoriteController extends Controller
 
     /**
      * Remove song from favorites
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function remove(Request $request)
     {
@@ -46,7 +52,7 @@ class FavoriteController extends Controller
             'music_song_id' => 'required|exists:music_songs,id'
         ]);
 
-        FavoriteSng::where('user_id', $user->id)
+        FavoriteSong::where('user_id', $user->id)
             ->where('music_song_id', $request->music_song_id)
             ->delete();
 
@@ -54,9 +60,11 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Toggle favorite (add if it doesn't exist, remove if it already exists).
-     * The method used by the dashboard via AJAX.
-     * Returns JSON with the result.
+     * Toggle favorite (add if not exists, remove if exists)
+     * Used by dashboard via AJAX, returns JSON
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function toggle(Request $request)
     {
