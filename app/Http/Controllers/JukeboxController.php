@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\JukeboxToken;
 use App\Models\UserToken;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -12,15 +13,14 @@ use Illuminate\View\View;
 class JukeboxController extends Controller
 {
     /**
-     * View of the main dashboard
-     *
+     * Main dashboard view
+     * 
      * @param Request $request
      * @return View
      */
     public function index(Request $request): View
     {
         $user = Auth::user();
-
         $search = $request->input('search');
 
         $availableTokens = JukeboxToken::orderBy('song_quantity')->get();
@@ -45,7 +45,7 @@ class JukeboxController extends Controller
             $tokenCounts[$token->name] = $activeTokens;
         }
 
-        $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
+        $userMoney = $user->money ?? 0;
 
         $allSongs = $this->getFilteredSongs($search);
         $allArtists = $this->getFilteredArtists($search);
@@ -80,8 +80,8 @@ class JukeboxController extends Controller
     }
 
     /**
-     * Get searched songs. By song or artist.
-     *
+     * Get filtered songs by search (title or artist)
+     * 
      * @param string|null $search
      * @return Collection
      */
@@ -110,8 +110,8 @@ class JukeboxController extends Controller
     }
 
     /**
-     * Get searched artists. Only artists that have at least one song.
-     *
+     * Get filtered artists that have at least one song
+     * 
      * @param string|null $search
      * @return Collection
      */
@@ -137,6 +137,9 @@ class JukeboxController extends Controller
 
     /**
      * Token purchase process
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function purchaseToken(Request $request)
     {
@@ -148,11 +151,9 @@ class JukeboxController extends Controller
 
         $token = JukeboxToken::findOrFail($request->jukebox_token_id);
 
-        $userMoney = \DB::table('users')->where('id', $user->id)->value('money') ?? 0;
-
-        if ($userMoney < $token->price) {
+        if ($user->money < $token->price) {
             return redirect()->route('dashboard')
-                ->with('error', 'Insufficient balance. You need €' . number_format($token->price, 2) . ' but you only have €' . number_format($userMoney, 2));
+                ->with('error', 'Insufficient balance. You need €' . number_format($token->price, 2) . ' but you only have €' . number_format($user->money, 2));
         }
 
         if ($token->stock <= 0) {
@@ -160,22 +161,17 @@ class JukeboxController extends Controller
                 ->with('error', 'This token is sold out.');
         }
 
-        \DB::transaction(function () use ($user, $token) {
-            \DB::table('users')
-                ->where('id', $user->id)
-                ->decrement('money', $token->price);
+        $user->decrement('money', $token->price);
+        $token->decrement('stock');
 
-            $token->decrement('stock');
-
-            UserToken::create([
-                'user_id' => $user->id,
-                'jukebox_token_id' => $token->id,
-                'songs_used' => 0,
-            ]);
-        });
+        UserToken::create([
+            'user_id' => $user->id,
+            'jukebox_token_id' => $token->id,
+            'songs_used' => 0,
+        ]);
 
         return redirect()->route('dashboard')
-        ->with('success', 'Token successfully purchased! ' . $token->name);
+            ->with('success', 'Token successfully purchased! ' . $token->name);
     }
 }
 
