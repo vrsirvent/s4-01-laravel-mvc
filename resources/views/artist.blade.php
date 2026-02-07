@@ -142,7 +142,7 @@
 
                 <div class="footer-info">
                     <div class="max-w-3xl mx-auto text-center">
-                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">🚗 CAR MODE</p>
+                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">CAR MODE</p>
                         <p class="text-xs md:text-sm text-gray-400">Use CAR mode to play all songs from an artist</p>
                     </div>
                 </div>

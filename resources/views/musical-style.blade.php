@@ -90,7 +90,7 @@
                 <!-- Footer -->
                 <div class="footer-info">
                     <div class="max-w-3xl mx-auto text-center">
-                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">✨ EXPLORE BY GENRE</p>
+                        <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">EXPLORE BY GENRE</p>
                         <p class="text-xs md:text-sm text-gray-400">Click on any category to see its songs and artists</p>
                     </div>
                 </div>

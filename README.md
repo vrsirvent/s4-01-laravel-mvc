@@ -1,254 +1,255 @@
 # City Jukebox
 
-Simulación musical vintage construida con Laravel
+Vintage music simulation built with Laravel
 
-## Descripción
+## Description
 
-**City Jukebox** es una aplicación web que simula un jukebox de los años 50, donde los usuarios pueden explorar catálogos musicales, gestionar sus canciones favoritas y reproducir música utilizando un sistema de tokens. El proyecto combina una estética retro con neón y elementos visuales animados.
+**City Jukebox** is a web application that simulates a 1950s jukebox, where users can explore music catalogs, manage their favorite songs, and play music using a token system. The project combines a retro aesthetic with neon and animated visual elements.
 
-## Características
+## Features
 
-### Sistema doble de Reproducción
+### Dual Playback System
 
-- **Modo MOTO**: Reproducción de canciones individuales
-  - Tokens de 1, 3 o 5 canciones
-  - Selección personalizada de temas
-  - Sistema de luces en un semáforo visual para los tokens
+- **MOTO Mode**: Individual song playback
+  - Tokens for 1, 3, or 5 songs
+  - Custom song selection
+  - Visual traffic light system for tokens
 
-- **Modo CAR**: Reproducción de artistas completos
-  - Reproduce todas las canciones de un artista
-  - Visualización animada del vehículo
+- **CAR Mode**: Complete artist playback
+  - Plays all songs from an artist
+  - Animated vehicle visualization
 
-### Funcionalidades
+### Functionalities
 
-- **Catálogo Musical Completo**
-  - Exploración de canciones
-  - Búsqueda por título y artista
-  - Vista de artistas con estadísticas
+- **Complete Music Catalog**
+  - Song exploration
+  - Search by title and artist
+  - Artist view with statistics
 
-- **Sistema de Favoritos**
-  - Gestión personal de canciones favoritas
-  - Interfaz de añadir (estrellas catálogo) / eliminar (estrellas favoritos)
+- **Favorites System**
+  - Personal management of favorite songs
+  - Add/remove interface (stars in catalog / stars in favorites)
 
-- **Sistema de Tokens**
-  - Compra de tokens con saldo virtuales
-  - 4 tipos de tokens: MOTO_1, MOTO_3, MOTO_5, CAR
-  - Gestión de tokens activos del usuario
+- **Token System**
+  - Token purchase with virtual balance
+  - 4 token types: MOTO_1, MOTO_3, MOTO_5, CAR
+  - User's active token management
 
-- **Gestión de Usuarios**
-  - Sistema de autenticación
-  - Perfil personal con saldo
-  - Historial de reproducción por artista
+- **User Management**
+  - Authentication system
+  - Personal profile with balance
+  - Playback history by artist
 
-### Diseño Visual
+### Visual Design
 
-- Interfaz estilo jukebox retro con efectos neón
-- Animaciones CSS para vehículos y carretera
-- Carrusel animado de estilos musicales
-- Diseño responsive (móvil, tablet, desktop)
-- Tema oscuro con acentos de colores neón
+- Retro jukebox-style interface with neon effects
+- CSS animations for vehicles and road
+- Animated carousel of musical styles
+- Responsive design (mobile, tablet, desktop)
+- Dark theme with neon color accents
 
-## Requisitos del Sistema
+## System Requirements
 
-- **PHP**: 8.2 o superior
+- **PHP**: 8.2 or higher
 - **Composer**: 2.x
-- **Node.js**: 18.x o superior
-- **NPM**: 9.x o superior
-- **Base de datos**: MySQL 8.0+
-- **Servidor web**: Apache
+- **Node.js**: 18.x or higher
+- **NPM**: 9.x or higher
+- **Database**: MySQL 8.0+
+- **Web Server**: Apache
 
-## Instalación
+## Installation
 
-Sigue estos pasos para instalar y ejecutar el proyecto en tu entorno local.
+Follow these steps to install and run the project in your local environment.
 
-### 1. Clonar el repositorio (develop)
+### 1. Clone the repository (develop)
 
 ```bash
 git clone https://github.com/vrsirvent/s4-01-laravel-mvc.git
 cd s4-01-laravel-mvc
 ```
 
-### 2. Instalar dependencias
+### 2. Install dependencies
 
-- Dependencias de PHP
+- PHP dependencies
 
 ```bash
 composer install
 ```
 
-- Dependencias de Node.js
+- Node.js dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configurar variables de entorno
+### 3. Configure environment variables
 
 ```bash
 cp .env.example .env
 ```
 
-Edita el archivo `.env` con tus credenciales de base de datos:
+Edit the `.env` file with your database credentials:
 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=city_jukebox
-DB_USERNAME=tu_usuario
-DB_PASSWORD=tu_contraseña
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
-### 4. Generar clave de aplicación
+### 4. Generate application key
 
 ```bash
 php artisan key:generate
 ```
 
-### 5. Crear la base de datos y ejecutar migraciones
+### 5. Create database and run migrations
 
-Asegúrate de que la base de datos existe en tu servidor MySQL, luego:
+Make sure the database exists on your MySQL server, then:
 
 ```bash
 php artisan migrate
 ```
 
-Si tienes **seeders** configurados para datos de prueba:
+If you have **seeders** configured for test data:
 
 ```bash
 php artisan db:seed
 ```
 
-### 6. Compilar assets del frontend
+### 6. Compile frontend assets
 
 ```bash
-# Desarrollo
+# Development
 npm run dev
 
-# Producción
+# Production
 npm run build
 ```
 
-## Ejecutar el proyecto
+## Running the Project
 
-- Iniciar el Servidor
+- Start the Server
 
 ```bash
 php artisan serve
 ```
 
-La aplicación estará disponible en: `http://localhost:8000`
+The application will be available at: `http://localhost:8000`
 
-## Base de Datos (MySQL)
+## Database (MySQL)
 
-En la aplicación el fichero `.env.example` está configurado para **MySQL**.
+In the application, the `.env.example` file is configured for **MySQL**.
 
-## Configuración
+## Configuration
 
-### Configuración de Créditos Iniciales
+### Initial Credits Configuration
 
-Los usuarios reciben **1000.00 €** como saldo inicial por defecto. Esto se configura en la migración:
+Users receive **€1000.00** as initial balance by default. This is configured in the migration:
 
 ```php
 // database/migrations/*_add_custom_fields_to_users_table.php
 $table->decimal('Money', 10, 2)->default(1000.00);
 ```
 
-### Configuración de Tokens
+### Token Configuration
 
-Los tokens del jukebox deben ser creados manualmente o mediante seeders.
+Jukebox tokens must be created manually or through seeders.
 
-## Funcionalidades
+## Functionalities
 
-### Dashboard Principal (`/dashboard`)
+### Main Dashboard (`/dashboard`)
 
-Es el centro de la aplicación, donde los usuarios interactúan con el jukebox.
+This is the application's hub, where users interact with the jukebox.
 
-**Elementos que lo incluyen:**
+**Elements included:**
 
-1. **Player Visual** (`_player.blade.php`)
+1. **Visual Player** (`_player.blade.php`)
 
-   - Animaciones de vehículos (moto/carro)
-   - Sistema de semáforo para selección de cantidad
-   - Controles de reproducción (play, pause, next)
-   - Indicadores de saldo y estado
+   - Vehicle animations (motorcycle/car)
+   - Traffic light system for quantity selection
+   - Playback controls (play, pause, next)
+   - Balance and status indicators
 
-2. **Catálogo** (`_catalog.blade.php`)
+2. **Catalog** (`_catalog.blade.php`)
 
-   - Vista dinámica según modo seleccionado
-   - Modo MOTO: lista de canciones con selección múltiple
-   - Modo CAR: lista de artistas
-   - Botones de favoritos integrados (añadir)
+   - Dynamic view according to selected mode
+   - MOTO Mode: song list with multiple selection
+   - CAR Mode: artist list
+   - Integrated favorite buttons (add)
 
-3. **Favoritos** (`_favorites.blade.php`)
+3. **Favorites** (`_favorites.blade.php`)
 
-   - Lista personal de canciones favoritas
-   - Gestión rápida de favoritos (remove)
+   - Personal list of favorite songs
+   - Quick favorites management (remove)
 
-4. **Búsqueda** (`_search.blade.php`)
+4. **Search** (`_search.blade.php`)
 
-   - Búsqueda en tiempo real
-   - Filtrado por título o artista
-   - Botón de limpiar búsqueda
+   - Real-time search
+   - Filter by title or artist
+   - Clear search button
 
-5. **Mis Tickets** (`_tickets.blade.php`)
+5. **My available tokens** (`_tickets.blade.php`)
 
-   - Visualización de tokens activos
-   - Contador en tiempo real
-   - Indicadores de color por tipo
+   - Active token visualization
+   - Real-time counter
+   - Color indicators by type
 
-6. **Comprar Tokens** (`_buy-tokens.blade.php`)
+6. **Buy Tokens** (`_buy-tokens.blade.php`)
 
-   - Tienda de tokens
-   - Compra directa con créditos
-   - Precios y descripciones
+   - Token store
+   - Direct purchase with credits
+   - Prices and descriptions
 
-### Otras páginas
+### Other Pages
 
-#### Catálogo de Canciones (`/songs`)
+#### Song Catalog (`/songs`)
 
-- Listado completo de todas las canciones
-- Filtrado por estilo musical
-- Búsqueda en tiempo real
-- Información detallada (artista, género)
+- Complete listing of all songs
+- Filter by musical style
+- Real-time search
+- Detailed information (artist, genre)
 
-#### Catálogo de Artistas (`/artist`)
+#### Artist Catalog (`/artist`)
 
-- Exploración de artistas
-- Filtrado por estilos musicales asociados
-- Búsqueda en tiempo real
-- Estadísticas (número de canciones, reproducciones)
-- Descripciones de artistas
+- Artist exploration
+- Filter by associated musical styles
+- Real-time search
+- Statistics (number of songs, plays)
+- Artist descriptions
 
-#### Estilos Musicales (`/musical-style`)
+#### Musical Styles (`/musical-style`)
 
-- Vista de todos los géneros disponibles
-- Estadísticas por estilo (canciones, artistas)
-- Descripciones de cada género
-- Color distintivos por estilo
+- View of all available genres
+- Statistics by style (songs, artists)
+- Descriptions of each genre
+- Distinctive colors by style
 
-### Sistema de Autenticación Breeze
+### Breeze Authentication System
 
-- Registro de usuarios
+- User registration
 - Login/Logout
-- Recuperación de contraseña
-- Gestión de perfil
+- Password recovery
+- Profile management
 - Email verification
 
-## Estructura del proyecto
+## Project Structure
 
-Proyecto city-jukebox/
+```
+city-jukebox project/
 │
 ├── app/
 │   ├── Http/
 │   │   └── Controllers/
-│   │       ├── Auth/                      # Autenticación creados por Breeze
-│   │       ├── JukeboxController.php      # Lógica del jukebox
-│   │       ├── PlayerController.php       # Reproducción de música
-│   │       ├── FavoriteController.php     # Gestión de favoritos
-│   │       ├── SongController.php         # Catálogo de canciones
-│   │       ├── ArtistController.php       # Catálogo de artistas
-│   │       └── MusicalStyleController.php # Estilos musicales
+│   │       ├── Auth/                      # Authentication created by Breeze
+│   │       ├── JukeboxController.php      # Jukebox logic
+│   │       ├── PlayerController.php       # Music playback
+│   │       ├── FavoriteController.php     # Favorites management
+│   │       ├── SongController.php         # Song catalog
+│   │       ├── ArtistController.php       # Artist catalog
+│   │       └── MusicalStyleController.php # Musical styles
 │   │
 │   └── Models/
 │       ├── User.php
@@ -262,89 +263,95 @@ Proyecto city-jukebox/
 ├── database/
 │   └── migrations/
 │       ├── *_create_artists_table.php
-│       ├──*_create_musical_styles_table.php
+│       ├── *_create_musical_styles_table.php
 │       ├── *_create_music_songs_table.php
-│       ├──*_create_favorite_songs_table.php
+│       ├── *_create_favorite_songs_table.php
 │       ├── *_create_jukebox_tokens_table.php
-│       ├──*_create_user_tokens_table.php
+│       ├── *_create_user_tokens_table.php
 │       ├── *_add_custom_fields_to_users_table.php
-│       └── ... (resto de migraciones)
+│       └── ... (other migrations)
 │
 ├── resources/
 │   ├── views/
-│   │   ├── welcome.blade.php              # Landing page
-│   │   ├── dashboard.blade.php            # Dashboard principal
-│   │   ├── song.blade.php                 # Catálogo de canciones
-│   │   ├── artist.blade.php               # Catálogo de artistas
-│   │   ├── musical-style.blade.php        # Estilos musicales
+│   │   ├── welcome.blade.php           # Landing page
+│   │   ├── dashboard.blade.php         # Main dashboard
+│   │   ├── song.blade.php              # Song catalog
+│   │   ├── artist.blade.php            # Artist catalog
+│   │   ├── musical-style.blade.php     # Musical styles
 │   │   │
-│   │   ├── partials/                      # Pertenecen al dashboard principal
-│   │   │   ├──_player.blade.php          # Reproductor visual
-│   │   │   ├──_catalog.blade.php         # Catálogo dinámico
-│   │   │   ├──_favorites.blade.php       # Lista de favoritos
-│   │   │   ├──_search.blade.php          # Barra de búsqueda
-│   │   │   ├──_tickets.blade.php         # Tickets del usuario
-│   │   │   └──_buy-tokens.blade.php      # Tienda de tokens
+│   │   ├── components/
+│   │   │   ├── responsive-nav-link.blade.php     # Responsive navigation
+│   │   │   ├── category-carousel.blade.php       # Carousel text light
+│   │   │   └── success-error-message.blade.php   # Error messages
 │   │   │
-│   │   ├── auth/                          # Creados por Breeze
+│   │   ├── partials/                     # Belong to main dashboard
+│   │   │   ├── _player.blade.php          # Visual player
+│   │   │   ├── _catalog.blade.php         # Dynamic catalog
+│   │   │   ├── _favorites.blade.php       # Favorites list
+│   │   │   ├── _search.blade.php          # Search bar
+│   │   │   ├── _tickets.blade.php         # User tickets
+│   │   │   └── _buy-tokens.blade.php      # Token store
+│   │   │
+│   │   ├── auth/                         # Created by Breeze
 │   │   │
 │   │   ├── errors/
-│   │   │   ├── 404.blade.php              # Error 404
+│   │   │   └── 404.blade.php             # 404 Error
 │   │   │
-│   │   └── layouts/                       # Creados por Breeze
-│   │       ├── app.blade.php              # Principal para usuarios autenticados
-│   │       ├── guest.blade.php            # Visitantes no autenticados
-│   │       ├── navigation.blade.php       # Navegación reutilizable (cabecera)
+│   │   └── layouts/                      # Created by Breeze
+│   │       ├── app.blade.php             # Main for authenticated users
+│   │       ├── guest.blade.php           # Unauthenticated visitors
+│   │       └── navigation.blade.php      # Reusable navigation (header)
 │   │
 │   ├── css/
-│   │   └── app.css                        # Estilos principales
+│   │   └── app.css                       # Main styles
 │   │
 │   └── js/
-│       └── app.js                         # JavaScript principal
+│       └── app.js                        # Main JavaScript
 │
 ├── routes/
-│   ├── web.php                            # Rutas web
-│   └── auth.php                           # Rutas de autenticación
+│   ├── web.php                           # Web routes
+│   └── auth.php                          # Authentication routes
 │
-├── .env.example                           # Plantilla de variables de entorno
-├── composer.json                          # Dependencias PHP
-├── package.json                           # Dependencias Node.js
-└── README.md                              # Este archivo
-
-## Rutas
-
-### Rutas Públicas
-
-```php
-GET  '/'                        # Página de bienvenida
+├── .env.example                          # Environment variables template
+├── composer.json                         # PHP dependencies
+├── package.json                          # Node.js dependencies
+└── README.md                             # This file
 ```
 
-### Rutas Protegidas (Requieren Autenticación)
+## Routes
+
+### Public Routes
 
 ```php
-# Dashboard y Jukebox
-GET  '/dashboard'               # Dashboard principal
-POST '/jukebox/purchase-token'  # Comprar token
-POST '/player/consume-token'    # Consumir token para reproducir
-
-# Favoritos
-POST '/favorites/toggle'        # Añadir/eliminar favorito
-
-# Catálogos
-GET  '/songs'                   # Catálogo de canciones
-GET  '/artist'                  # Catálogo de artistas
-GET  '/musical-style'           # Estilos musicales
-
-# Perfil de Usuario
-GET  '/profile'                 # Ver perfil
-PATCH '/profile'                # Actualizar perfil
-DELETE '/profile'               # Eliminar cuenta
+GET  '/'                        # Welcome page
 ```
 
-### Rutas de Autenticación (Breeze)
+### Protected Routes (Require Authentication)
 
 ```php
-# Registro
+# Dashboard and Jukebox
+GET  '/dashboard'               # Main dashboard
+POST '/jukebox/purchase-token'  # Purchase token
+POST '/player/consume-token'    # Consume token to play
+
+# Favorites
+POST '/favorites/toggle'        # Add/remove favorite
+
+# Catalogs
+GET  '/songs'                   # Song catalog
+GET  '/artist'                  # Artist catalog
+GET  '/musical-style'           # Musical styles
+
+# User Profile
+GET  '/profile'                 # View profile
+PATCH '/profile'                # Update profile
+DELETE '/profile'               # Delete account
+```
+
+### Authentication Routes (Breeze)
+
+```php
+# Registration
 GET  '/register'
 POST '/register'
 
@@ -353,69 +360,69 @@ GET  '/login'
 POST '/login'
 POST '/logout'
 
-# Recuperación de Contraseña
+# Password Recovery
 GET  '/forgot-password'
 POST '/forgot-password'
 GET  '/reset-password/{token}'
 POST '/reset-password'
 
-# Verificación de Email
+# Email Verification
 GET  '/verify-email'
 POST '/email/verification-notification'
 GET  '/email/verify/{id}/{hash}'
 ```
 
-## Tecnologías Utilizadas
+## Technologies Used
 
 ### Backend
 
 - **Framework**: Laravel 11.x
-- **Autenticación**: Breeze
-- **Base de Datos**: Eloquent ORM
-- **Validación**: Form Requests
-- **Migraciones**: Schema Builder
+- **Authentication**: Breeze
+- **Database**: Eloquent ORM
+- **Validation**: Form Requests
+- **Migrations**: Schema Builder
 
 ### Frontend
 
-- **CSS Framework**: Tailwind CSS 3.x, (más librerías de componentes DaisyUI 5.x y Flowbite @4.x)
+- **CSS Framework**: Tailwind CSS 3.x (plus component libraries DaisyUI 5.x and Flowbite @4.x)
 - **JavaScript Framework**: Alpine.js 3.x
-- **Componentes**: Blade Templates
+- **Components**: Blade Templates
 - **Build Tool**: Vite
-- **Iconos**: Emojis Unicode de la URL <https://emojipedia.org>
-- **Animaciones**: CSS Animations + Transitions
+- **Icons**: Unicode Emojis from URL <https://emojipedia.org>
+- **Animations**: CSS Animations + Transitions
 
-### Componentes Alpine.js
+### Alpine.js Components
 
 ```javascript
-// Estado de la aplicación
+// Application state
 x-data="jukeboxApp()"
 
-// Funciones principales:
-- init()                  // Inicialización
-- selectMode()            // Seleccionar modo moto/car
-- selectQuantity()        // Seleccionar cantidad de canciones
-- toggleSongSelection()   // Seleccionar/deseleccionar canción
-- selectArtist()          // Seleccionar artista
-- addFavorite()           // Añadir a favoritos
-- removeFavorite()        // Quitar de favoritos
-- consumeToken()          // Consumir token y reproduc
+// Main functions:
+- init()                  // Initialization
+- selectMode()            // Select moto/car mode
+- selectQuantity()        // Select song quantity
+- toggleSongSelection()   // Select/deselect song
+- selectArtist()          // Select artist
+- addFavorite()           // Add to favorites
+- removeFavorite()        // Remove from favorites
+- consumeToken()          // Consume token and play
 ```
 
-### Middleware de Autenticación
+### Authentication Middleware
 
-Las rutas protegidas usan:
+Protected routes use:
 
 ```php
 Route::middleware(['auth', 'verified'])->group(function () {
-    // rutas protegidas
+    // protected routes
 });
 ```
 
-### Validación de Datos
+### Data Validation
 
-Los controladores validan datos de entrada antes de procesarlos.
+Controllers validate input data before processing.
 
-## Proyecto desarrollado por
+## Project Developed By
 
 Vicenç Sirvent - IT Academy - Barcelona Activa
 Sprint 4 - Full Stack PHP 2025-2026

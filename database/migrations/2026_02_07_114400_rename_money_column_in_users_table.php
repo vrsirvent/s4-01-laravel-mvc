@@ -6,25 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('other_information', 255)->nullable()->after('email');
-            $table->decimal('money', 10, 2)->default(1000.00)->after('other_information');
+            $table->renameColumn('Money', 'money');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['other_information', 'money']);
+            $table->renameColumn('money', 'Money');
         });
     }
 };
+
 

@@ -18,7 +18,6 @@
                 :class="{ 'disabled': selectedMode !== 'moto' }"
                 @click="selectedMode === 'moto' ? selectQuantity(5) : null">5</div>
         </div>
-        <div class="traffic-pole"></div>
     </div>
 
     <div class="controls">

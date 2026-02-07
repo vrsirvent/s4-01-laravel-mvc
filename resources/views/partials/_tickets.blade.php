@@ -1,6 +1,6 @@
 {{-- MY TICKETS: User's active tokens --}}
 <div class="mt-4 md:mt-6 fichas-container">
-    <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MY TICKETS</h3>                                                      
+    <h3 class="section-title section-title-yellow text-lg md:text-xl mb-3 md:mb-4">🎟️ MY AVAILABLE TOKENS</h3>                                                      
     <div class="flex flex-wrap justify-center md:justify-around items-center gap-4 md:gap-6">
         {{-- MOTO 1 --}}
         <div class="ficha-item w-full sm:w-auto">

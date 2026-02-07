@@ -25,7 +25,7 @@
                     </div>
 
                     <div class="credits">
-                        <p class="credits-label">CREDIT:</p>
+                        <p class="credits-label">BALANCE:</p>
                         <p class="credits-amount">€ {{ number_format($userMoney, 2) }}</p>
                     </div>
                 </div>
@@ -64,13 +64,14 @@
                 <div class="footer-info">
                     <div class="max-w-3xl mx-auto text-center">
                         <p class="font-neon text-sm md:text-base text-neon-yellow mb-1">INSTRUCTION</p>
-                        <p class="text-xs md:text-sm text-gray-400">Navigate the catalog, find your favorite songs and mark them with</p>
-                        <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-cyan mt-4">HOW TO USE</h4>
-                        <ol class="list-decimal list-inside text-xs md:text-sm instructions-list">
-                            <li>- Choose the mode: Motorcycle for individual songs or Car for the entire artist</li>
-                            <li>- Use the traffic light to select the quantity (1, 3, or 5 songs)</li>
-                            <li>- Select songs from the catalog or favorites</li>
-                            <li>- Play your selection with the controls</li>
+                        <p class="text-xs md:text-sm text-gray-400">Browse the catalog, find your favorite songs, and mark them with a star</p>
+                        <h4 class="font-neon text-base md:text-lg mb-2 md:mb-3 text-neon-green mt-4">HOW TO USE</h4>
+                        <ol class="text-xs md:text-sm text-gray-400">
+                            <li>1.- Buy tokens with your available balance</li> 
+                            <li>2.- Choose the mode: Motorcycle for individual songs or Car for the entire artist</li>
+                            <li>3.- Use the traffic light to select the quantity (1, 3, or 5 songs)</li>
+                            <li>4.- Select songs from the catalog</li>
+                            <li>5.- Play your selection with the controls</li>
                         </ol>
                     </div>
                 </div>

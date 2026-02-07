@@ -90,7 +90,7 @@
                 </x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-mono">
-                    {{ __('Dashboard') }}
+                    {{ __('Jukebox') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('song')" :active="request()->routeIs('song')" class="font-mono">
                     {{ __('Songs') }}
@@ -108,8 +108,8 @@
             <!-- Responsive Settings Options -->
             <div class="pt-4 pb-1 responsive-settings-border">
                 <div class="px-4">
-                    <div class="font-medium text-base text-neon-cyan">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="font-medium text-base text-neon-green">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-neon-green">{{ Auth::user()->email }}</div>
                 </div>
 
                 <div class="mt-3 space-y-1">
