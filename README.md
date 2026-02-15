@@ -50,68 +50,142 @@ Vintage music simulation built with Laravel
 
 ## System Requirements
 
-- **PHP**: 8.2 or higher
-- **Composer**: 2.x
-- **Node.js**: 18.x or higher
-- **NPM**: 9.x or higher
-- **Database**: MySQL 8.0+
-- **Web Server**: Apache
+### Required Software
+
+Before starting, make sure you have these software and verify installation installed:
+
+`php --version`       **PHP 8.2** or higher
+`composer --version`  **Composer** 2.x
+`node --version`      **Node.js 18.x LTS** or higher
+`npm --version`       **NPM** 9.x
+`mysql --version`     **MySQL** 8.0
+
+### Optional
+
+- **XAMPP** (Includes Apache and MySQL) - Recommended for beginners
+- **Git** - For cloning the repository
 
 ## Installation
 
-Follow these steps to install and run the project in your local environment.
+Follow these steps **in order**. Do not skip any step.
 
-### 1. Clone the repository (develop)
+### Step 1: Clone the repository
+
+**Branch:** develop
 
 ```bash
 git clone https://github.com/vrsirvent/s4-01-laravel-mvc.git
 cd s4-01-laravel-mvc
 ```
 
-### 2. Install dependencies
-
-- PHP dependencies
+### Step 2: Install PHP dependencies
 
 ```bash
 composer install
 ```
 
-- Node.js dependencies
+**If you get a memory error:**
+
+```bash
+COMPOSER_MEMORY_LIMIT=-1 composer install
+```
+
+### Step 3: Install JavaScript dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure environment variables
+### Step 4: Configure environment variables
+
+**Windows:**
+
+```bash
+copy .env.example .env
+```
+
+**Mac/Linux:**
 
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file with your database credentials:
+**4.2. Edit the `.env` file:**
+
+Open the `.env` file with your text editor and configure these variables:
 
 ```env
+APP_NAME="City Jukebox"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=city_jukebox
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
+DB_DATABASE=jukebox_retro_digi
+DB_USERNAME=root
+DB_PASSWORD=
 ```
 
-### 4. Generate application key
+The password is EMPTY (don't write anything in `DB_PASSWORD=`)
+
+### Step 5: Generate application key
 
 ```bash
 php artisan key:generate
 ```
 
-### 5. Create database and run migrations
+This will automatically add the key to your `.env` file.
 
-Make sure the database exists on your MySQL server, then:
+### Step 6: Create the database
+
+**Before running migrations**, create the database:
+
+#### phpMyAdmin (For XAMPP users)
+
+1. **Start XAMPP:**
+   - Open XAMPP Control Panel
+   - Click **"Start"** on Apache
+   - Click **"Start"** on MySQL
+   - Both should show green status
+
+2. **Open phpMyAdmin:**
+   - Open your browser
+   - Go to: `http://localhost/phpmyadmin`
+
+3. **Create the database:**
+   - Click **"New"** in the left panel
+   - Database name: `jukebox_retro_digi`
+   - Collation: Select `utf8mb4_unicode_ci` from the dropdown
+   - Click **"Create"**
+
+4. **Verify:**
+   - You should see `jukebox_retro_digi` appear in the left panel
+
+### Step 7: Run migrations
+
+Now that the database exists, create all the tables:
 
 ```bash
 php artisan migrate
 ```
+
+"Migrated" messages in green.
+
+**Tables created:**
+
+- `users` - User accounts with custom fields (balance)
+- `artists` - Musical artists
+- `musical_styles` - Music genres
+- `music_songs` - Songs database
+- `favorite_songs` - User favorites
+- `jukebox_tokens` - Available token types
+- `user_tokens` - User-owned tokens
+- `cache`, `jobs` - Laravel system tables
+
+### Step 8: Seed the database
 
 If you have **seeders** configured for test data:
 
@@ -119,44 +193,171 @@ If you have **seeders** configured for test data:
 php artisan db:seed
 ```
 
-### 6. Compile frontend assets
+### Step 9: Compile frontend assets
+
+**For development:**
 
 ```bash
-# Development
 npm run dev
+```
 
-# Production
+**For production:**
+
+```bash
 npm run build
 ```
 
 ## Running the Project
 
-- Start the Server
+### Start the development server
 
 ```bash
 php artisan serve
 ```
 
-The application will be available at: `http://localhost:8000`
+### Access the application
 
-## Database (MySQL)
+Open your browser and go to: `http://localhost:8000`
 
-In the application, the `.env.example` file is configured for **MySQL**.
+### Stop the server
+
+Press `Ctrl + C` in the terminal where the server is running.
+
+## Verify Installation before using the application
+
+### Check migrations
+
+```bash
+php artisan migrate:status
+```
+
+### Check database data
+
+```bash
+php artisan tinker --execute="echo 'Styles: ' . \App\Models\MusicalStyle::count() . PHP_EOL; echo 'Artists: ' . \App\Models\Artist::count() . PHP_EOL; echo 'Songs: ' . \App\Models\MusicSong::count() . PHP_EOL; echo 'Tokens: ' . \App\Models\JukeboxToken::count() . PHP_EOL;"
+```
+
+## Troubleshooting
+
+### ❌ Error: "Unknown database 'jukebox_retro_digi'"
+
+**Cause:** The database doesn't exist in MySQL.
+**Solution:**
+You must create the database before running migrations.
+
+### ❌ Error: "No application encryption key has been specified"
+
+**Cause:** Missing APP_KEY in `.env` file.
+**Solution:**
+
+```bash
+php artisan key:generate
+```
+
+### ❌ Error: "Access denied for user 'root'@'localhost'"
+
+**Cause:** Incorrect MySQL credentials in `.env`
+
+**Solution:**
+
+1. Open `.env` file
+2. Check these lines:
+
+```env
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+**Test your connection:**
+
+```bash
+mysql -u root -p
+```
+
+If you can't connect, restart MySQL from XAMPP Control Panel.
+
+### ❌ Blank page with no errors
+
+**Cause:** Debug mode disabled or cache issues.
+
+**Solution:**
+
+1. Enable debug in `.env`:
+
+```env
+APP_DEBUG=true
+```
+
+2. Clear all cache:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+```
+
+### ❌ Changes in CSS/JS not showing
+
+**Cause:** Browser cache or assets not recompiled.
+
+**Solution:**
+
+1. Recompile assets:
+
+```bash
+npm run build
+```
+
+2. Clear Laravel cache:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+```
+
+### Emergency Commands
+
+If nothing works, try these:
+
+```bash
+# Clean everything
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+# Reinstall dependencies
+composer install
+npm install
+# Recompile assets
+npm run build
+# Check configuration
+php artisan config:show
+php artisan migrate:status
+```
 
 ## Configuration
 
 ### Initial Credits Configuration
 
-Users receive **€1000.00** as initial balance by default. This is configured in the migration:
+Users receive **€ 1000.00** as initial balance by default. This is configured in the migration:
 
 ```php
 // database/migrations/*_add_custom_fields_to_users_table.php
 $table->decimal('Money', 10, 2)->default(1000.00);
 ```
 
+To change the initial balance, modify this value and run:
+Warning: This will delete all existing data.
+
+```bash
+php artisan migrate:fresh --seed
+```
+
 ### Token Configuration
 
-Jukebox tokens must be created manually or through seeders.
+Tokens are configured through seeders: `database/seeders/JukeboxTokenSeeder.php`
 
 ## Functionalities
 
@@ -167,38 +368,32 @@ This is the application's hub, where users interact with the jukebox.
 **Elements included:**
 
 1. **Visual Player** (`_player.blade.php`)
-
    - Vehicle animations (motorcycle/car)
    - Traffic light system for quantity selection
    - Playback controls (play, pause, next)
    - Balance and status indicators
 
 2. **Catalog** (`_catalog.blade.php`)
-
    - Dynamic view according to selected mode
    - MOTO Mode: song list with multiple selection
    - CAR Mode: artist list
    - Integrated favorite buttons (add)
 
 3. **Favorites** (`_favorites.blade.php`)
-
    - Personal list of favorite songs
    - Quick favorites management (remove)
 
 4. **Search** (`_search.blade.php`)
-
    - Real-time search
    - Filter by title or artist
    - Clear search button
 
 5. **My available tokens** (`_tickets.blade.php`)
-
    - Active token visualization
    - Real-time counter
    - Color indicators by type
 
 6. **Buy Tokens** (`_buy-tokens.blade.php`)
-
    - Token store
    - Direct purchase with credits
    - Prices and descriptions
@@ -237,7 +432,6 @@ This is the application's hub, where users interact with the jukebox.
 
 ## Project Structure
 
-```
 city-jukebox project/
 │
 ├── app/
@@ -293,10 +487,8 @@ city-jukebox project/
 │   │   │   └── _buy-tokens.blade.php      # Token store
 │   │   │
 │   │   ├── auth/                         # Created by Breeze
-│   │   │
 │   │   ├── errors/
 │   │   │   └── 404.blade.php             # 404 Error
-│   │   │
 │   │   └── layouts/                      # Created by Breeze
 │   │       ├── app.blade.php             # Main for authenticated users
 │   │       ├── guest.blade.php           # Unauthenticated visitors
@@ -304,7 +496,6 @@ city-jukebox project/
 │   │
 │   ├── css/
 │   │   └── app.css                       # Main styles
-│   │
 │   └── js/
 │       └── app.js                        # Main JavaScript
 │
@@ -312,11 +503,15 @@ city-jukebox project/
 │   ├── web.php                           # Web routes
 │   └── auth.php                          # Authentication routes
 │
+├── public/
+│   └── audio/
+│       └── songs/                        # MP3 files
+│
 ├── .env.example                          # Environment variables template
+├── .env                                  # Your configuration (DO NOT commit to Git)
 ├── composer.json                         # PHP dependencies
 ├── package.json                          # Node.js dependencies
 └── README.md                             # This file
-```
 
 ## Routes
 
@@ -377,18 +572,19 @@ GET  '/email/verify/{id}/{hash}'
 ### Backend
 
 - **Framework**: Laravel 11.x
-- **Authentication**: Breeze
-- **Database**: Eloquent ORM
+- **Authentication**: Laravel Breeze
+- **Database**: Eloquent ORM (MySQL)
 - **Validation**: Form Requests
 - **Migrations**: Schema Builder
 
 ### Frontend
 
-- **CSS Framework**: Tailwind CSS 3.x (plus component libraries DaisyUI 5.x and Flowbite @4.x)
+- **CSS Framework**: Tailwind CSS 3.x
+- **Component Libraries**: DaisyUI 5.x, Flowbite 4.x
 - **JavaScript Framework**: Alpine.js 3.x
-- **Components**: Blade Templates
-- **Build Tool**: Vite
-- **Icons**: Unicode Emojis from URL <https://emojipedia.org>
+- **Template Engine**: Blade Templates
+- **Build Tool**: Vite 7.x
+- **Icons**: Unicode Emojis ([Emojipedia](https://emojipedia.org))
 - **Animations**: CSS Animations + Transitions
 
 ### Alpine.js Components
@@ -420,11 +616,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 ### Data Validation
 
-Controllers validate input data before processing.
+Controllers validate input data before processing to ensure data integrity.
+
+## Audio
+
+### File used
+
+- **Title:** Backseat Bop - 1950s Style Rock And Roll
+- **Artist:** kaazoom
+- **Source:** [Pixabay Music](https://pixabay.com/music/)
+- **License:** [Pixabay Content License](https://pixabay.com/service/license-summary/)
+- **Usage:** Free for commercial and non-commercial purposes
+- **Attribution:** Not required
+
+All MP3 files in `public/audio/songs/` are copies of this single file, renamed to correspond with the songs in the database.
+
+### Important clarification
+
+The MP3 files are **NOT the original recordings** of Elvis Presley, Chuck Berry, Ray Charles, etc. They are copies of a single instrumental sample file downloaded from Pixabay Music.
+
+**Purpose:** To demonstrate audio playback functionality in an educational context, NOT commercial music distribution.
+
+**Legal compliance:**
+
+- Artist and song names in the database are information public domain
+- Audio files are royalty-free music from Pixabay
+- No copyrighted recordings are included
+
+## License
+
+This project is developed for educational purposes as part of the IT Academy Full Stack PHP program.
 
 ## Project Developed By
 
-Vicenç Sirvent - IT Academy - Barcelona Activa
+**Vicenç Sirvent**  
+IT Academy - Barcelona Activa  
 Sprint 4 - Full Stack PHP 2025-2026
-
-
