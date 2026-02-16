@@ -349,7 +349,7 @@ VISUAL SCREEN & ROAD
 */
 .visual-screen {
   height: 480px;
-  background: linear-gradient(to bottom, #1a1530 0%, #221a40 15%, #2a1f4d 30%, #32245a 45%, #3a2967 60%, #422e74 75%, #4a3481 90%, #52398e 100%);
+  background: #2a2a2a;
   position: relative;
   overflow: hidden;
   border-radius: 15px;
@@ -372,16 +372,22 @@ VISUAL SCREEN & ROAD
 
 .road {
   position: absolute;
-  bottom: 0;
+  bottom: -10px;
   width: 100%;
-  height: 100px;
+  height: 120px;
   background: linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
   border-top: 3px solid #ffd700;
+  border-bottom: 3px solid #ffd700;
+  z-index: 2;
+}
+
+.road.moving {
+  animation: road-rise 2s ease-in-out infinite;
 }
 
 .road-line {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 0;
   width: 100%;
   height: 4px;
@@ -558,7 +564,7 @@ VEHICLES (unified)
 .vehicles {
   position: absolute;
   left: 160px;
-  bottom: 20px;
+  bottom: 30px;
   display: flex;
   gap: 60px;
   z-index: 20;
@@ -582,6 +588,10 @@ VEHICLES (unified)
   width: 120px;
   height: 85px;
   position: relative;
+}
+
+.moto.moving {
+  animation: vehicle-bounce-moto 0.25s ease-in-out infinite, vehicle-tilt-moto 1.2s ease-in-out infinite;
 }
 
 .moto-body {
@@ -617,6 +627,12 @@ VEHICLES (unified)
   top: 30px;
   right: 14px;
   box-shadow: 0 0 15px var(--neon-yellow);
+  opacity: 0.3;
+}
+
+.moto-light.on {
+  opacity: 1;
+  animation: light-flicker 2s ease-in-out infinite;
 }
 
 .moto-light.blinking,
@@ -629,6 +645,10 @@ VEHICLES (unified)
   width: 150px;
   height: 90px;
   position: relative;
+}
+
+.car.moving {
+  animation: vehicle-bounce-car 0.35s ease-in-out infinite, vehicle-tilt-car 1.8s ease-in-out infinite;
 }
 
 .car-roof {
@@ -674,6 +694,12 @@ VEHICLES (unified)
   bottom: 35px;
   right: 10px;
   box-shadow: 0 0 20px var(--neon-yellow);
+  opacity: 0.3;
+}
+
+.car-headlight.on {
+  opacity: 1;
+  animation: light-flicker 2s ease-in-out infinite;
 }
 
 .car-taillight {
@@ -690,7 +716,16 @@ VEHICLES (unified)
 /*
 CATALOG & FAVORITES (unified)
 */
-.catalog,
+.catalog {
+  background: var(--gradient-auth);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 15px;
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .favorites {
   background: var(--gradient-auth);
   border: 2px solid var(--neon-cyan);
@@ -699,6 +734,10 @@ CATALOG & FAVORITES (unified)
   max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.catalog.artists-view {
+  border: 2px solid var(--neon-purple);
 }
 
 .favorites {
@@ -1586,6 +1625,89 @@ ANIMATIONS
   50% { transform: scale(1.1); }
 }
 
+@keyframes road-rise {
+  0%, 100% { 
+    transform: translateY(0); 
+  }
+  50% { 
+    transform: translateY(-5px); 
+  }
+}
+
+@keyframes vehicle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes vehicle-bounce-moto {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes vehicle-tilt-moto {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-1deg);
+  }
+  70% {
+    transform: rotate(1deg);
+  }
+}
+
+@keyframes vehicle-bounce-car {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes vehicle-tilt-car {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-0.7deg);
+  }
+  80% {
+    transform: rotate(0.7deg);
+  }
+}
+
+@keyframes vehicle-tilt {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-0.5deg);
+  }
+  75% {
+    transform: rotate(0.5deg);
+  }
+}
+
+@keyframes light-flicker {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 15px currentColor, 0 0 30px currentColor;
+  }
+}
+
 /*
 RESPONSIVE DESIGN
 */
@@ -2189,3 +2311,4 @@ RESPONSIVE DESIGN
     .neon-bar {
         display: none !important;
     }}
+    

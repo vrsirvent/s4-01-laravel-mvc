@@ -1,8 +1,8 @@
 {{-- Player display screen. Alpine's <script> controls these elements. --}}
 <div class="visual-screen mb-4 md:mb-6">
-    <div class="stars"></div>
+    <div class="stars" id="cityBackground"></div>
     <div class="city"></div>
-    <div class="road">
+    <div class="road" id="roadElement">
         <div class="road-line" id="roadLine"></div>
     </div>
 
@@ -319,22 +319,34 @@ document.addEventListener('alpine:init', () => {
 
         startVisualAnimations() {
             const roadLine = document.getElementById('roadLine');
+            const roadElement = document.getElementById('roadElement');
             const motoLight = document.getElementById('motoLight');
             const carLight = document.getElementById('carLight');
+            const vehicleMoto = document.getElementById('vehicleMoto');
+            const vehicleCar = document.getElementById('vehicleCar');
             
             if (roadLine) roadLine.classList.add('moving');
+            if (roadElement) roadElement.classList.add('moving');
             if (motoLight) motoLight.classList.add('on');
             if (carLight) carLight.classList.add('on');
+            if (vehicleMoto) vehicleMoto.classList.add('moving');
+            if (vehicleCar) vehicleCar.classList.add('moving');
         },
 
         stopVisualAnimations() {
             const roadLine = document.getElementById('roadLine');
+            const roadElement = document.getElementById('roadElement');
             const motoLight = document.getElementById('motoLight');
             const carLight = document.getElementById('carLight');
+            const vehicleMoto = document.getElementById('vehicleMoto');
+            const vehicleCar = document.getElementById('vehicleCar');
             
             if (roadLine) roadLine.classList.remove('moving');
+            if (roadElement) roadElement.classList.remove('moving');
             if (motoLight) motoLight.classList.remove('on');
             if (carLight) carLight.classList.remove('on');
+            if (vehicleMoto) vehicleMoto.classList.remove('moving');
+            if (vehicleCar) vehicleCar.classList.remove('moving');
         },
 
         resumePlay() {
@@ -377,6 +389,14 @@ document.addEventListener('alpine:init', () => {
             
             this.stopVisualAnimations();
             
+            document.querySelectorAll('.traffic-light').forEach(light => {
+                light.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.vehicle').forEach(vehicle => {
+                vehicle.classList.remove('active');
+            });
+            
             const title = document.querySelector('.now-playing-title');
             const subtitle = document.querySelector('.now-playing-subtitle');
             const hint = document.querySelector('.now-playing-hint');
@@ -390,7 +410,6 @@ document.addEventListener('alpine:init', () => {
             return this.favoriteIds.includes(songId);
         },
 
-        // Add to favorites (only from catalog)
         addFavorite(songId) {
             if (this.favoriteIds.includes(songId)) return;
             
@@ -423,7 +442,6 @@ document.addEventListener('alpine:init', () => {
             });
         },
         
-        // Remove from favorites (only from favorites)
         async removeFavorite(songId) {
             if (this._togglingFavorite) return;
             
@@ -457,5 +475,3 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 </script>
-
-
