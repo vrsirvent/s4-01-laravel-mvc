@@ -63,7 +63,7 @@
                         </div>
 
                         {{-- Artists catalog --}}
-                        <div class="catalog">
+                        <div class="catalog artists-view">
                             <div class="h-96 overflow-scroll">
                                 @if($allArtists->count() > 0)
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
